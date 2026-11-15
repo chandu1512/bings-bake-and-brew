@@ -1,0 +1,311 @@
+{
+ "source": "https://www.doordash.com/store/bings-bake-&-brew-1192685/",
+ "scraped": "2026-11-15",
+ "note": "DoorDash prices are set by the merchant and may be higher than in-store.",
+ "categories": {
+  "Hot Drinks": [
+   {
+    "name": "Cafe Latte",
+    "price": "$4.25",
+    "description": "Espresso & steamed milk   Flavor options available",
+    "photo": "/photos/amstel/hot-drinks--cafe-latte.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/8bfaf940-042c-4e55-9016-08402983f45c-retina-large-jpeg"
+   },
+   {
+    "name": "Americano",
+    "price": "$3.75",
+    "description": "Americano, available in 12 oz, 16 oz, 20 oz.",
+    "photo": "/photos/amstel/hot-drinks--americano.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/28546c1a-472e-4a8d-ac83-64044d042ac4-retina-large.jpg"
+   },
+   {
+    "name": "Chai Latte",
+    "price": "$4.75",
+    "description": "Steamed milk with Chai",
+    "photo": "/photos/amstel/hot-drinks--chai-latte.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/c712a645-6d34-418b-89eb-b7eaa818e74e-retina-large.jpg"
+   },
+   {
+    "name": "Hot Chocolate",
+    "price": "$3.50",
+    "description": "Gourmet chocolate & steamed milk",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Brewed Coffee",
+    "price": "$3.00",
+    "description": "12/16/20 oz drip coffee (Full body medium roast)",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Vanilla Latte",
+    "price": "$5.05",
+    "description": "Espresso, steamed milk & vanilla syrup",
+    "photo": "/photos/amstel/hot-drinks--vanilla-latte.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/8bfaf940-042c-4e55-9016-08402983f45c-retina-large-jpeg"
+   },
+   {
+    "name": "White Mocha",
+    "price": "$4.85",
+    "description": "Espresso, steamed milk & white chocolate",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Loose Leaf Tea",
+    "price": "$3.50",
+    "description": "16 oz only",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Monthly Featured Drink",
+    "price": "$5.35",
+    "description": "Current Featured Drink -",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Cappuccino",
+    "price": "$4.25",
+    "description": "Espresso with steamed and foamed milk",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Bing's Mocha",
+    "price": "$5.35",
+    "description": "Espresso, streamed milk, white chocolate & swirls of caramel",
+    "photo": "/photos/amstel/hot-drinks--bing-s-mocha.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/c3bdd8db-97a0-4f41-913d-15c65020b38f-retina-large-jpeg"
+   },
+   {
+    "name": "Cafe Mocha",
+    "price": "$4.85",
+    "description": "Espresso, steamed milk & gourmet chocolate",
+    "photo": null,
+    "photo_source": null
+   }
+  ],
+  "Frozen & Blended": [
+   {
+    "name": "Green Tea Matcha Frozen",
+    "price": "$5.45",
+    "description": "Matcha blend, choice of 16 oz or 24 oz. Optional whole, skim, cream, soy, almond, or oat milk. No dairy alternative also available.",
+    "photo": "/photos/amstel/frozen-blended--green-tea-matcha-frozen.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/1f4c1d68-0786-43b8-b8f0-3141bb63d8f3-retina-large-jpeg"
+   },
+   {
+    "name": "Cafe Mocha Frozen",
+    "price": "$5.95",
+    "description": "Espresso, milk & gourmet chocolate",
+    "photo": "/photos/amstel/frozen-blended--cafe-mocha-frozen.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/1651e15b-8c3c-417b-bdea-a051f5567aec-retina-large-jpeg"
+   },
+   {
+    "name": "Bing's Mocha Frozen",
+    "price": "$5.95",
+    "description": "Espresso, milk, white chocolate & swirls of caramel",
+    "photo": "/photos/amstel/frozen-blended--bing-s-mocha-frozen.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/049ff087-4d7a-4da8-b2b8-71d1c15968e7-retina-large-jpeg"
+   },
+   {
+    "name": "White Mocha Frozen",
+    "price": "$5.95",
+    "description": "Espresso, milk & white chocolate",
+    "photo": "/photos/amstel/frozen-blended--white-mocha-frozen.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/ad666b3e-922a-446a-a975-8d9e35378942-retina-large-jpeg"
+   },
+   {
+    "name": "Chai Latte Frozen",
+    "price": "$5.50",
+    "description": "Chai tea frozen blend. Available in 16 oz or 24 oz. Choose from whole, skim, cream, no dairy, soy, almond, or oat milk options.",
+    "photo": "/photos/amstel/frozen-blended--chai-latte-frozen.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/c75998ff-6952-4271-a347-d7713f3cb822-retina-large-jpeg"
+   },
+   {
+    "name": "Vanilla Latte Frozen",
+    "price": "$5.75",
+    "description": "Espresso, milk & vanilla syrup",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Flavored Creme",
+    "price": "$5.35",
+    "description": "Smooth and creamy vanilla blend with rich, natural vanilla flavor.",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Cafe Latte Frozen",
+    "price": "$5.00",
+    "description": "Espresso & Milk  Flavor options available",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Hot Chocolate Freeze",
+    "price": "$5.25",
+    "description": "Decadent frozen hot chocolate blend. Choose from 16 oz or 24 oz. Opt for whole, skim, cream, soy, almond, or oat milk; no-dairy option available.",
+    "photo": "/photos/amstel/frozen-blended--hot-chocolate-freeze.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/b6187465-235e-44fc-abf2-387803f5fa0a-retina-large-jpeg"
+   },
+   {
+    "name": "Monthly Featured Drink - Frozen",
+    "price": "$6.05",
+    "description": "Current featured drink",
+    "photo": "/photos/amstel/frozen-blended--monthly-featured-drink-frozen.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/0393a69d-d25e-473d-a1c1-7bc9d1355563-retina-large.jpg"
+   }
+  ],
+  "Iced Drinks": [
+   {
+    "name": "Cafe Mocha Iced",
+    "price": "$5.65",
+    "description": "Espresso, milk & gourmet chocolate",
+    "photo": "/photos/amstel/iced-drinks--cafe-mocha-iced.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/5a6f4923-c7b7-4028-8965-9b475ff7566b-retina-large-jpeg"
+   },
+   {
+    "name": "Bing's Mocha Iced",
+    "price": "$5.85",
+    "description": "Espresso, milk, white chocolate & swirls of caramel",
+    "photo": "/photos/amstel/iced-drinks--bing-s-mocha-iced.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/f4bde583-90bb-4d39-b388-2f882f13677d-retina-large-jpeg"
+   },
+   {
+    "name": "Vanilla Latte Iced",
+    "price": "$5.65",
+    "description": "Espresso, milk & vanilla syrup",
+    "photo": "/photos/amstel/iced-drinks--vanilla-latte-iced.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/bd0a624b-b323-4160-a3d8-20365892c3c1-retina-large-jpeg"
+   },
+   {
+    "name": "Cafe Latte Iced",
+    "price": "$4.85",
+    "description": "Espresso & milk  Flavor options available",
+    "photo": "/photos/amstel/iced-drinks--cafe-latte-iced.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/bd0a624b-b323-4160-a3d8-20365892c3c1-retina-large-jpeg"
+   },
+   {
+    "name": "Chai Latte Iced",
+    "price": "$5.00",
+    "description": "Chai tea blend, served iced. Choose between 16 oz or 24 oz.",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Iced Tea",
+    "price": "$4.35",
+    "description": "Choice of refreshing green or black tea, served iced. Available in 16 oz or 24 oz sizes.",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Monthly Featured Drink - ICED",
+    "price": "$5.95",
+    "description": "Current featured drink -",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Cold Brew",
+    "price": "$4.50",
+    "description": "Iced coffee available in 16 oz or 24 oz. Choice of dairy: whole, skim, cream, or alternatives: soy, almond, oat milk.",
+    "photo": "/photos/amstel/iced-drinks--cold-brew.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/354cfc38-984d-4530-b6e2-8af7f28e805d-retina-large-jpeg"
+   },
+   {
+    "name": "White Mocha Iced",
+    "price": "$5.65",
+    "description": "Espresso, milk & white chocolate",
+    "photo": "/photos/amstel/iced-drinks--white-mocha-iced.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/ad666b3e-922a-446a-a975-8d9e35378942-retina-large-jpeg"
+   }
+  ],
+  "Breakfast / Lunch": [
+   {
+    "name": "Meat, Egg & Cheese",
+    "price": "$8.50",
+    "description": "Choice of bacon or sausage on choice of bread.",
+    "photo": "/photos/amstel/breakfast-lunch--meat-egg-cheese.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/ugc/977140de-ff78-49de-a120-4b0998a0f97f-e721f979-239e-4a18-b7b4-683df52f415a.jpg"
+   },
+   {
+    "name": "Egg & Cheese",
+    "price": "$7.25",
+    "description": "Egg & Cheese on choice of bread.",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Bagel with Cream Cheese",
+    "price": "$4.50",
+    "description": "Choice of Cinnamon Raisin, Everything, or Plain bagel. Topped with Plain or Vegetable cream cheese.",
+    "photo": "/photos/amstel/breakfast-lunch--bagel-with-cream-cheese.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/441d7ac1-220a-44d7-a6d7-d0fd3c287726-retina-large.jpg"
+   },
+   {
+    "name": "Bagel with Butter",
+    "price": "$3.75",
+    "description": "Handmade bagel, choice of everything, cinnamon raisin, plain, or sesame, served with butter.",
+    "photo": null,
+    "photo_source": null
+   }
+  ],
+  "Handmade Desserts": [
+   {
+    "name": "Crumb Cake",
+    "price": "$4.95",
+    "description": "Moist cake finished with a homemade crumb topping",
+    "photo": "/photos/amstel/handmade-desserts--crumb-cake.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/31c1a40b-f5cd-4262-bc73-dac5565e6f7a-retina-large.jpg"
+   },
+   {
+    "name": "Gourmet Cookies",
+    "price": "$3.50+",
+    "description": "Assorted gourmet cookies: oatmeal raisin, peanut butter. Handmade desserts.",
+    "photo": "/photos/amstel/handmade-desserts--gourmet-cookies.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/6c1d694d-49db-48b2-9219-7547a04c7f4e-retina-large.jpg"
+   },
+   {
+    "name": "Raspberry Strip",
+    "price": "$3.75",
+    "description": "Flakey puff pastry dough with a layer of raspberry filling.",
+    "photo": "/photos/amstel/handmade-desserts--raspberry-strip.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photos/b6868186-82a5-4633-96e6-c2b3eb8004ca-retina-large-jpeg"
+   },
+   {
+    "name": "Pound Cake (Slice)",
+    "price": "$3.50",
+    "description": "Moist and dense slice of classic pound cake with a golden-brown crust.",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Brownie",
+    "price": "$3.95",
+    "description": "Brownie topped with a fudge icing",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Muffins",
+    "price": "$4.50",
+    "description": "Handmade muffins in blueberry or orange cranberry options.",
+    "photo": "/photos/amstel/handmade-desserts--muffins.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/249c0ee6-e7f9-4dac-ada5-62a48a6639fe-retina-large.JPG"
+   },
+   {
+    "name": "Croissants",
+    "price": "$4.50",
+    "description": "Buttery, flaky pastry filled with a sweet, rich filling, topped with a light sprinkle of coarse sugar.",
+    "photo": "/photos/amstel/handmade-desserts--croissants.jpg",
+    "photo_source": "https://img.cdn4dd.com/cdn-cgi/image/fit=contain,width=1200,height=672,format=auto/https://doordash-static.s3.amazonaws.com/media/photosV2/e33441c1-c448-4c0d-a784-6e872fd637bb-retina-large.jpg"
+   }
+  ]
+ }
+}

@@ -1,0 +1,433 @@
+@import "@fontsource-variable/playfair-display/wght.css";
+@import "@fontsource-variable/playfair-display/wght-italic.css";
+@import "@fontsource-variable/jost/index.css";
+@import "@fontsource/yellowtail/latin-400.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Heritage gold: espresso bands, cream panels, the logo's burgundy, antique gold foil. */
+:root {
+  --porcelain: #f4eadb;
+  --ink: #1a100c;
+  --cherry: #7a1f2b;
+  --espresso: #1a100c;
+  --butter: #c9a15a;
+  --gold: #c9a15a;
+  --gold-light: #ecd59c;
+  --gold-deep: #9c7636;
+  --foil: linear-gradient(180deg, #f1dda6 0%, #d9b46a 38%, #c9a15a 58%, #a9803c 100%);
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --nav-h: 68px;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 1.1 -0.15'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+    scroll-padding-top: calc(var(--nav-h) + 24px);
+    scrollbar-color: #b9a88c var(--porcelain);
+  }
+
+  body {
+    background-color: var(--porcelain);
+    color: var(--ink);
+    font-family: "Jost Variable", "Jost", system-ui, sans-serif;
+    font-size: 1.04rem;
+    overflow-x: clip;
+    caret-color: var(--cherry);
+  }
+
+  /* Film grain over everything: a noise tile that jumps a few px, like 35mm stock. */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    pointer-events: none;
+    background-image: var(--grain);
+    background-size: 220px 220px;
+    opacity: 0.055;
+    mix-blend-mode: multiply;
+    animation: grain 0.9s steps(1) infinite;
+  }
+  @media (min-width: 1024px) {
+    body::after { opacity: 0.075; mix-blend-mode: overlay; }
+  }
+
+  h1, h2 {
+    font-family: "Playfair Display Variable", "Playfair Display", Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    line-height: 1;
+    text-wrap: balance;
+  }
+  h1 em, h2 em, h3 em { font-style: italic; font-weight: 400; color: var(--cherry); }
+
+  h3, h4 {
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    line-height: 1.15;
+  }
+
+  p { text-wrap: pretty; }
+
+  ::selection { background: var(--cherry); color: #fff; }
+
+  :focus-visible {
+    outline: 2px solid var(--gold-deep);
+    outline-offset: 3px;
+    border-radius: 8px;
+  }
+
+  button, a, [role="radio"], [role="tab"] { touch-action: manipulation; }
+
+  button, [role="radio"], [role="tab"] {
+    user-select: none;
+    -webkit-user-select: none;
+    font: inherit;
+  }
+
+  a { text-underline-offset: 0.2em; }
+
+  /* One film stock: a light warm grade on every photograph (never the logo). */
+  img:not([src*="brand"]) { filter: sepia(0.16) saturate(1.08) contrast(1.04) brightness(0.985); }
+
+  .tnum { font-variant-numeric: tabular-nums; }
+}
+
+@layer components {
+  .shell {
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: 20px;
+  }
+  @media (min-width: 768px) { .shell { padding-inline: 40px; } }
+
+  .font-display { font-weight: 500; letter-spacing: -0.012em; }
+
+  .display-xl { font-size: clamp(2.7rem, 5.4vw, 4.9rem); }
+  .display-lg { font-size: clamp(2.2rem, 4.6vw, 3.9rem); }
+  .display-md { font-size: clamp(1.7rem, 2.8vw, 2.4rem); line-height: 1.06; }
+
+  /* Every large section heading opens with a short gold rule and a diamond. */
+  .display-lg::before {
+    content: "";
+    display: block;
+    width: 92px;
+    height: 9px;
+    margin-bottom: 20px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='92' height='9'%3E%3Cpath d='M0 4.5h34M58 4.5h34' stroke='%23C9A15A'/%3E%3Cpath d='M46 0.5l4 4-4 4-4-4z' fill='%23C9A15A'/%3E%3C/svg%3E") no-repeat;
+  }
+
+  .lede {
+    font-size: clamp(1.08rem, 1.3vw, 1.24rem);
+    line-height: 1.55;
+    color: #4a3a32;
+    max-width: 44ch;
+  }
+
+  /* Hand-lettered accent: "Since 1871" and small flourishes */
+  .script {
+    font-family: "Yellowtail", "Snell Roundhand", cursive;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+  .foil-text {
+    background: linear-gradient(180deg, #f3e2b0 0%, #d8b267 45%, #b98f48 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 0 14px rgba(201, 161, 90, 0.35));
+  }
+
+  /* Ornamental divider: hairline, diamond, hairline */
+  .ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: var(--gold-deep);
+  }
+  .ornament::before, .ornament::after {
+    content: "";
+    height: 1px;
+    flex: 1 1 0;
+    max-width: 220px;
+    background: linear-gradient(90deg, transparent, currentColor);
+  }
+  .ornament::after { background: linear-gradient(270deg, transparent, currentColor); }
+  .ornament-mark {
+    width: 9px;
+    height: 9px;
+    transform: rotate(45deg);
+    background: var(--foil);
+    box-shadow: 0 0 0 3px transparent, 0 0 0 4px currentColor;
+  }
+
+  /* Buttons */
+  .btn {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+    min-height: 50px;
+    padding: 0 1.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 1.02rem;
+    letter-spacing: 0.005em;
+    white-space: nowrap;
+    transition: transform 160ms var(--ease-out), box-shadow 200ms ease, background-color 200ms ease;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn svg { transition: transform 220ms var(--ease-out); }
+
+  /* Primary: antique gold foil, with a slow shimmer sweep on hover */
+  .btn-cherry, .btn-butter, .btn-gold {
+    color: #1a100c;
+    background: var(--foil);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.65),
+      inset 0 -2px 0 rgba(90, 60, 15, 0.28),
+      inset 0 0 0 1px rgba(122, 88, 32, 0.45),
+      0 14px 28px -14px rgba(201, 161, 90, 0.7);
+  }
+  .btn-cherry::before, .btn-butter::before, .btn-gold::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.75) 50%, transparent 65%);
+    transform: translateX(-120%);
+  }
+  .btn-ink {
+    color: #fff;
+    background: linear-gradient(180deg, #3a2620 0%, #1a100c 60%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 0 0 1px rgba(201, 161, 90, 0.28), 0 14px 26px -16px rgba(26, 16, 12, 0.8);
+  }
+  .btn-glass {
+    color: var(--ink);
+    background: linear-gradient(180deg, #fffaf0 0%, #f4eadb 100%);
+    box-shadow: inset 0 0 0 1px rgba(156, 118, 54, 0.4), inset 0 1px 0 #fff, 0 10px 22px -16px rgba(26, 16, 12, 0.5);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .btn:hover { transform: translateY(-1px); }
+    .btn:hover:active { transform: scale(0.97); }
+    .btn:hover svg.nudge { transform: translateX(3px); }
+    .btn-cherry:hover::before, .btn-butter:hover::before, .btn-gold:hover::before {
+      transform: translateX(120%);
+      transition: transform 1100ms var(--ease-in-out);
+    }
+    .link-draw:hover::after { transform: scaleX(1); }
+    .zoom-frame:hover .zoom { transform: scale(1.045); }
+  }
+
+  .link-draw { position: relative; font-weight: 600; }
+  .link-draw::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: -2px;
+    height: 1.5px;
+    background: currentColor;
+    transform: scaleX(0.0);
+    transform-origin: left;
+    transition: transform 260ms var(--ease-out);
+  }
+  .link-under { text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: var(--gold); font-weight: 600; }
+
+  /* Counter glass: the nav bar, the shop switch, the bag */
+  .glass {
+    background: rgba(251, 245, 234, 0.8);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(150%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+      inset 0 1px 0 #fff,
+      0 0 0 1px rgba(156, 118, 54, 0.22),
+      0 18px 40px -24px rgba(26, 16, 12, 0.4);
+    transition: background-color 320ms ease, box-shadow 320ms ease, color 320ms ease;
+  }
+  .glass-dark {
+    color: #fff;
+    background: rgba(26, 16, 12, 0.5);
+    box-shadow:
+      inset 0 0 0 1px rgba(201, 161, 90, 0.3),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      0 18px 40px -24px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Dark espresso band: filmy brown and gold only (burgundy lives in the logo, not the glow) */
+  .hero-band {
+    background:
+      radial-gradient(60% 55% at 50% 0%, rgba(74, 46, 28, 0.85) 0%, rgba(58, 36, 24, 0) 75%),
+      radial-gradient(42% 52% at 88% 62%, rgba(201, 161, 90, 0.16) 0%, rgba(201, 161, 90, 0) 70%),
+      radial-gradient(42% 52% at 10% 40%, rgba(120, 78, 40, 0.28) 0%, rgba(120, 78, 40, 0) 70%),
+      linear-gradient(180deg, #2b1a12 0%, #1a100c 100%);
+    border-bottom: 1px solid rgba(201, 161, 90, 0.55);
+  }
+  /* Footage grade: one warm brown stock, lifted blacks */
+  .film-grade { filter: sepia(0.62) saturate(0.95) brightness(0.62) contrast(1.08) !important; }
+  .hero-grade {
+    background:
+      radial-gradient(46% 62% at 50% 54%, rgba(26, 16, 12, 0.72) 0%, rgba(26, 16, 12, 0.22) 100%),
+      linear-gradient(180deg, rgba(43, 26, 18, 0.7) 0%, rgba(58, 36, 24, 0.18) 38%, rgba(26, 16, 12, 0.82) 100%),
+      linear-gradient(0deg, rgba(201, 161, 90, 0.1), rgba(201, 161, 90, 0.1));
+  }
+  /* A gold light leak that drifts across now and then */
+  .light-leak {
+    background: linear-gradient(105deg, transparent 30%, rgba(236, 213, 156, 0.2) 46%, rgba(201, 161, 90, 0.1) 54%, transparent 68%);
+    mix-blend-mode: screen;
+    transform: translateX(-110%);
+    animation: leak 13s ease-in-out 2s infinite;
+  }
+
+  /* Film print: cream paper edge, gold hairline, soft shadow, grain */
+  .film-card {
+    position: relative;
+    padding: 7px;
+    border-radius: 5px;
+    background: linear-gradient(160deg, #f8efdc 0%, #e9d9b8 100%);
+    box-shadow:
+      0 0 0 1px rgba(201, 161, 90, 0.95),
+      0 34px 60px -26px rgba(0, 0, 0, 0.85),
+      0 8px 16px -8px rgba(0, 0, 0, 0.55);
+  }
+  .film-frame { border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(26, 16, 12, 0.25); }
+  .film-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: var(--grain), linear-gradient(180deg, rgba(201, 161, 90, 0.1), rgba(58, 36, 24, 0.22));
+    background-size: 160px 160px, auto;
+    opacity: 0.5;
+    mix-blend-mode: multiply;
+  }
+  .floaty { animation: floaty 7s ease-in-out infinite alternate; }
+  .film-strip { -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+  .film-strip-track { animation: strip 48s linear infinite; }
+  @media (hover: hover) { .film-strip:hover .film-strip-track { animation-play-state: paused; } }
+
+  .hero-band::after, .grain-dark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: var(--grain);
+    background-size: 180px 180px;
+    opacity: 0.16;
+    mix-blend-mode: soft-light;
+    animation: grain 0.7s steps(1) infinite;
+  }
+  .hero-canvas { animation: hero-in 900ms var(--ease-out) both; }
+
+  .card {
+    background: #fbf5ea;
+    border-radius: 22px;
+    box-shadow:
+      inset 0 0 0 1px rgba(156, 118, 54, 0.22),
+      inset 0 1px 0 #fff,
+      0 18px 40px -28px rgba(26, 16, 12, 0.4);
+  }
+
+  /* A soft highlight laid over photographs, with a hairline of gold */
+  .gloss::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(135deg, rgba(255, 240, 210, 0.26) 0%, rgba(255, 255, 255, 0) 32%);
+    box-shadow: inset 0 0 0 1px rgba(201, 161, 90, 0.4);
+  }
+
+  .zoom { transition: transform 700ms var(--ease-out); }
+
+  .dot-live { position: relative; }
+  .dot-live::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: currentColor;
+    animation: ping 2.4s var(--ease-out) infinite;
+  }
+}
+
+@keyframes grain {
+  0% { background-position: 0 0; }
+  12% { background-position: -34px 21px; }
+  25% { background-position: 27px -48px; }
+  37% { background-position: -51px -17px; }
+  50% { background-position: 44px 39px; }
+  62% { background-position: -12px 58px; }
+  75% { background-position: 59px -8px; }
+  87% { background-position: -40px -55px; }
+}
+
+@keyframes leak {
+  0%, 55% { transform: translateX(-110%); opacity: 0; }
+  62% { opacity: 1; }
+  85%, 100% { transform: translateX(110%); opacity: 0; }
+}
+@keyframes floaty { from { transform: translate3d(0, -7px, 0); } to { transform: translate3d(0, 8px, 0); } }
+@keyframes strip { to { transform: translate3d(-50%, 0, 0); } }
+
+@keyframes hero-in { from { opacity: 0; } to { opacity: 1; } }
+
+@keyframes ping {
+  0% { transform: scale(1); opacity: 0.55; }
+  70%, 100% { transform: scale(2.6); opacity: 0; }
+}
+
+@keyframes kenburns {
+  from { transform: scale(1.04) translate3d(0, 0, 0); }
+  to { transform: scale(1.13) translate3d(-1.5%, -2%, 0); }
+}
+.kenburns { animation: kenburns 22s ease-in-out infinite alternate; }
+
+@keyframes steam {
+  0% { transform: translate3d(0, 12px, 0) scaleX(1); opacity: 0; }
+  25% { opacity: 0.55; }
+  100% { transform: translate3d(8px, -70px, 0) scaleX(1.6); opacity: 0; }
+}
+.steam span {
+  position: absolute;
+  bottom: 0;
+  width: 14px;
+  height: 64px;
+  border-radius: 999px;
+  background: linear-gradient(to top, rgba(255,255,255,0), rgba(255,255,255,0.85), rgba(255,255,255,0));
+  filter: blur(7px);
+  opacity: 0;
+  animation: steam 4.8s ease-out infinite;
+}
+.steam span:nth-child(2) { left: 22px; animation-delay: 1.5s; animation-duration: 5.6s; }
+.steam span:nth-child(3) { left: 44px; animation-delay: 2.9s; animation-duration: 5.1s; }
+
+@keyframes sway {
+  from { transform: rotateY(-9deg) rotateX(5deg); }
+  to { transform: rotateY(9deg) rotateX(-3deg); }
+}
+
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: clip; }
+
+@media (prefers-reduced-motion: reduce) {
+  .kenburns, .steam span, .dot-live::before, .floaty, .film-strip-track, .light-leak, body::after, .hero-band::after, .grain-dark::after { animation: none; }
+  .zoom, .btn, .btn svg, .btn::before { transition-duration: 0.01ms !important; }
+}

@@ -1,0 +1,388 @@
+{
+ "source": "https://www.seamless.com/menu/bings-bake--brew-elkton-124-west-main-street-elkton/13261848",
+ "scraped": "2026-11-15",
+ "phone": "(667) 215-0237",
+ "note": "Seamless prices are set by the merchant; \"+\" means the base (smallest) size, larger sizes cost more. Prices may be lower in-store.",
+ "categories": {
+  "Savory": [
+   {
+    "name": "Plain Croissants",
+    "price": "$4.75",
+    "description": "Flaky & Savory",
+    "photo": "/photos/elkton/savory--plain-croissants.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/letuodfoahmqsleneskh.jpg"
+   },
+   {
+    "name": "Bacon, Egg & Cheese Croissant",
+    "price": "$8.50",
+    "description": "Flaky & Savory",
+    "photo": "/photos/elkton/savory--bacon-egg-cheese-croissant.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/cu1lfpvxo62xvcg6r79q.jpg"
+   },
+   {
+    "name": "Sausage, Egg & Cheese Croissant",
+    "price": "$8.50",
+    "description": "Flaky & Savory",
+    "photo": "/photos/elkton/savory--sausage-egg-cheese-croissant.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/cck9qjimfjzoljevkpzs.webp"
+   },
+   {
+    "name": "Bacon, Egg &Cheese on Plain Bagel",
+    "price": "$8.50",
+    "description": "",
+    "photo": "/photos/elkton/savory--bacon-egg-cheese-on-plain-bagel.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/odidc2xipwbxpjv8mker.webp"
+   },
+   {
+    "name": "Sausage, Egg & Cheese on Plain Bagel",
+    "price": "$8.50",
+    "description": "",
+    "photo": "/photos/elkton/savory--sausage-egg-cheese-on-plain-bagel.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/kyfxmmghkum8yedpc1i7.jpg"
+   },
+   {
+    "name": "Bacon, Egg & Cheese on Everything Bagel",
+    "price": "$8.50",
+    "description": "",
+    "photo": "/photos/elkton/savory--bacon-egg-cheese-on-everything-bagel.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/pahhszee3j5cb0nztk4b.jpg"
+   },
+   {
+    "name": "Sausage, Egg & Cheese on Everything Bagel",
+    "price": "$8.50",
+    "description": "",
+    "photo": "/photos/elkton/savory--sausage-egg-cheese-on-everything-bagel.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/kvca70hkyssnrirx4yhz.jpg"
+   },
+   {
+    "name": "Plain Bagel W/ Butter",
+    "price": "$3.50",
+    "description": "Handmade Bagel with Butter",
+    "photo": "/photos/elkton/savory--plain-bagel-w-butter.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/ctam3ttruqmzq50q1b6r.jpg"
+   },
+   {
+    "name": "Everything Bagel W/ Butter",
+    "price": "$3.50",
+    "description": "Handmade Bagel With Butter",
+    "photo": "/photos/elkton/savory--everything-bagel-w-butter.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/umfffuogyq7izhkuam4p.webp"
+   },
+   {
+    "name": "Plain Bagel W/ Cream Cheese",
+    "price": "$4.50",
+    "description": "Handmade Bagel with Plain Cream Cheese",
+    "photo": "/photos/elkton/savory--plain-bagel-w-cream-cheese.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/ctam3ttruqmzq50q1b6r.jpg"
+   },
+   {
+    "name": "Everything Bagel W/ Cream Cheese",
+    "price": "$4.50",
+    "description": "Handmade Bagel With Cream Cheese",
+    "photo": "/photos/elkton/savory--everything-bagel-w-cream-cheese.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/n8am1vtxfvozl4pmxtb3.jpg"
+   }
+  ],
+  "Baked Goods": [
+   {
+    "name": "Brownies",
+    "price": "$3.75",
+    "description": "Our Homemade Brownie With a Fudge Layer on Top",
+    "photo": "/photos/elkton/baked-goods--brownies.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/kqkoczo30j8uqmjhiqyf.jpg"
+   },
+   {
+    "name": "Crumb Cake",
+    "price": "$4.95",
+    "description": "Moist Cake Finished off With Our Homemade Crumb Topping",
+    "photo": "/photos/elkton/baked-goods--crumb-cake.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/d2erhiv2gmcgtsknhmr8.webp"
+   },
+   {
+    "name": "Iced Cinnamon Buns",
+    "price": "$4.95",
+    "description": "Soft, Fluffy Layers of Dough Swirled With Warm Cinnamon and Brown Sugar Topped with Creamy Icing",
+    "photo": "/photos/elkton/baked-goods--iced-cinnamon-buns.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/gnvya2zlo2rmyyeffmap.jpg"
+   },
+   {
+    "name": "Tiramisu",
+    "price": "$5.95",
+    "description": "Coffee Flavored Italian Dessert",
+    "photo": "/photos/elkton/baked-goods--tiramisu.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/k20k9dhzlabnab4bbhvb.jpg"
+   },
+   {
+    "name": "Raspberry Strip",
+    "price": "$3.95",
+    "description": "Flaky Puff Pastry With Raspberry Filling",
+    "photo": "/photos/elkton/baked-goods--raspberry-strip.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/cijezjwbknewpngajrlx.jpg"
+   },
+   {
+    "name": "Blueberry Muffin",
+    "price": "$4.95",
+    "description": "",
+    "photo": "/photos/elkton/baked-goods--blueberry-muffin.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/tj47abwynrjslkpiurd4.jpg"
+   },
+   {
+    "name": "Orange Cranberry Muffin",
+    "price": "$4.95",
+    "description": "",
+    "photo": "/photos/elkton/baked-goods--orange-cranberry-muffin.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/tj47abwynrjslkpiurd4.jpg"
+   },
+   {
+    "name": "Chocolate Croissant",
+    "price": "$4.50",
+    "description": "Buttery, Flaky Pastry Filled With Chocolate Filling",
+    "photo": "/photos/elkton/baked-goods--chocolate-croissant.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/dz0i542t0rvnq1aazonx.webp"
+   },
+   {
+    "name": "Carrot Squares",
+    "price": "$3.75",
+    "description": "Packed with Finely  Grated Carrots with Warm Spices of Cinnamon and Nutmeg",
+    "photo": "/photos/elkton/baked-goods--carrot-squares.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/hnbkfcjvu4c5nnzn0omp.jpg"
+   },
+   {
+    "name": "Apple Turnover",
+    "price": "$3.95",
+    "description": "Flaky Golden Buttery Pastry With Our Homemade Apple Filling",
+    "photo": null,
+    "photo_source": null
+   }
+  ],
+  "Frozen and Blended": [
+   {
+    "name": "Signature Mocha",
+    "price": "$5.80+",
+    "description": "",
+    "photo": "/photos/elkton/frozen-and-blended--signature-mocha.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/dzqff5hgvmg7jofpc3zf.jpg"
+   },
+   {
+    "name": "Vanilla Latte",
+    "price": "$5.80+",
+    "description": "",
+    "photo": "/photos/elkton/frozen-and-blended--vanilla-latte.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/hbdih7vbkpkv9bpbuyvm.webp"
+   },
+   {
+    "name": "Cafe Mocha",
+    "price": "$5.80+",
+    "description": "",
+    "photo": "/photos/elkton/frozen-and-blended--cafe-mocha.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/xentku3znda7mavcqoyq.jpg"
+   },
+   {
+    "name": "White Mocha",
+    "price": "$5.80+",
+    "description": "",
+    "photo": "/photos/elkton/frozen-and-blended--white-mocha.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/qy0k4firtkxu0rsgmu8p.jpg"
+   },
+   {
+    "name": "Cafe Latte",
+    "price": "$5.80+",
+    "description": "",
+    "photo": "/photos/elkton/frozen-and-blended--cafe-latte.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/hbdih7vbkpkv9bpbuyvm.webp"
+   },
+   {
+    "name": "Vanilla Creme",
+    "price": "$5.80+",
+    "description": "",
+    "photo": "/photos/elkton/frozen-and-blended--vanilla-creme.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/jvga7kow0vnz4mgigcgg.webp"
+   },
+   {
+    "name": "Green Tea Matcha",
+    "price": "$5.80+",
+    "description": "",
+    "photo": "/photos/elkton/frozen-and-blended--green-tea-matcha.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/kz8igmgzpvdr5suskx30.jpg"
+   },
+   {
+    "name": "Hot Chocolate Freeze",
+    "price": "$5.80+",
+    "description": "",
+    "photo": "/photos/elkton/frozen-and-blended--hot-chocolate-freeze.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/buqnxrzo6onyy1quuuxg.jpg"
+   },
+   {
+    "name": "Fruit Smoothie",
+    "price": "$6.75+",
+    "description": "",
+    "photo": "/photos/elkton/frozen-and-blended--fruit-smoothie.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/bzwpxysuioe0fbc2u5ln.jpg"
+   }
+  ],
+  "Espresso": [
+   {
+    "name": "Vanilla Latte",
+    "price": "$5.10+",
+    "description": "",
+    "photo": "/photos/elkton/espresso--vanilla-latte.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/fhazwiu8mpc5n9rbzjln.jpg"
+   },
+   {
+    "name": "Cafe Mocha",
+    "price": "$5.10+",
+    "description": "",
+    "photo": "/photos/elkton/espresso--cafe-mocha.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/pixlttgwdt1rz51kn6ga.jpg"
+   },
+   {
+    "name": "White Mocha",
+    "price": "$5.10+",
+    "description": "",
+    "photo": "/photos/elkton/espresso--white-mocha.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/ei7r0vhud0t81q5krvc5.jpg"
+   },
+   {
+    "name": "Cafe Latte",
+    "price": "$5.10+",
+    "description": "",
+    "photo": "/photos/elkton/espresso--cafe-latte.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/srumg05xjmk5uofpjoca.jpg"
+   },
+   {
+    "name": "Cappuccino",
+    "price": "$5.10+",
+    "description": "",
+    "photo": "/photos/elkton/espresso--cappuccino.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/ontkxgtd1hzfkpfo30bx.webp"
+   },
+   {
+    "name": "Signature Mocha",
+    "price": "$5.10+",
+    "description": "",
+    "photo": null,
+    "photo_source": null
+   }
+  ],
+  "Weekly Feature Drink": [
+   {
+    "name": "Bing's Mocha Hot",
+    "price": "$6.15+",
+    "description": "",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Bing's Mocha Iced",
+    "price": "$6.65+",
+    "description": "",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Bing's Mocha Frozen",
+    "price": "$6.75+",
+    "description": "",
+    "photo": null,
+    "photo_source": null
+   }
+  ],
+  "Over Ice": [
+   {
+    "name": "Signature Mocha",
+    "price": "$5.65+",
+    "description": "",
+    "photo": "/photos/elkton/over-ice--signature-mocha.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/gblzvvvqzu3pnafm59qi.jpg"
+   },
+   {
+    "name": "Vanilla Latte",
+    "price": "$5.65+",
+    "description": "",
+    "photo": "/photos/elkton/over-ice--vanilla-latte.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/g4i82u5mvswnpd4ooidm.jpg"
+   },
+   {
+    "name": "Cafe Latte",
+    "price": "$5.65+",
+    "description": "",
+    "photo": "/photos/elkton/over-ice--cafe-latte.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/qw24aofnxtwfvk5ufuwv.jpg"
+   },
+   {
+    "name": "Chai Latte",
+    "price": "$5.65+",
+    "description": "",
+    "photo": "/photos/elkton/over-ice--chai-latte.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/juhiaqmrehew1sa7gxkc.webp"
+   },
+   {
+    "name": "Cafe Mocha",
+    "price": "$5.65+",
+    "description": "",
+    "photo": "/photos/elkton/over-ice--cafe-mocha.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/ak9o6udlfs4fmv7k9abz.jpg"
+   },
+   {
+    "name": "White Mocha",
+    "price": "$5.65+",
+    "description": "",
+    "photo": "/photos/elkton/over-ice--white-mocha.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/j1tfwrfjclc3b3pohdju.jpg"
+   },
+   {
+    "name": "Ice Coffee",
+    "price": "$5.65+",
+    "description": "",
+    "photo": "/photos/elkton/over-ice--ice-coffee.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/mpxcdwjsebmgymswvs6a.jpg"
+   }
+  ],
+  "Tea": [
+   {
+    "name": "Organic Black Tea",
+    "price": "$3.95+",
+    "description": "",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Organic Green Tea",
+    "price": "$3.95+",
+    "description": "",
+    "photo": null,
+    "photo_source": null
+   },
+   {
+    "name": "Loose Leaf Hot Tea",
+    "price": "$4.50",
+    "description": "",
+    "photo": null,
+    "photo_source": null
+   }
+  ],
+  "Alternatives": [
+   {
+    "name": "Chai Latte",
+    "price": "$5.50+",
+    "description": "",
+    "photo": "/photos/elkton/alternatives--chai-latte.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/bnl1cub2iky7xn7xcy0u.jpg"
+   },
+   {
+    "name": "Hot Chocolate",
+    "price": "$4.30+",
+    "description": "",
+    "photo": "/photos/elkton/alternatives--hot-chocolate.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/hll33ptfkulzwwuytpkz.jpg"
+   },
+   {
+    "name": "Brewed Coffee",
+    "price": "$3.55+",
+    "description": "",
+    "photo": "/photos/elkton/alternatives--brewed-coffee.jpg",
+    "photo_source": "https://media-cdn.grubhub.com/image/upload/s3v45b1ubvqnvobeqfa4.webp"
+   }
+  ]
+ }
+}

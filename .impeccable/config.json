@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "gradient-text",
+        "value": "*",
+        "files": [
+          "src/app/globals.css"
+        ],
+        "createdAt": "2026-11-15T18:40:55.423Z",
+        "reason": "user chose the 'Heritage gold' direction with gold foil; .foil-text is used only on decorative 'Since 1871' / 'Made your way' script marks, prices use solid gold"
+      }
+    ]
+  }
+}
