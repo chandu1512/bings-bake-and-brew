@@ -1,0 +1,18 @@
+import type { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/site";
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const pages: { path: string; priority: number; freq: "weekly" | "monthly" }[] = [
+    { path: "", priority: 1, freq: "weekly" },
+    { path: "/menu", priority: 0.9, freq: "weekly" },
+    { path: "/order", priority: 0.8, freq: "weekly" },
+    { path: "/visit", priority: 0.8, freq: "monthly" },
+    { path: "/gift-cards", priority: 0.5, freq: "monthly" },
+  ];
+  return pages.map((p) => ({
+    url: `${SITE_URL}${p.path}`,
+    lastModified: new Date(),
+    changeFrequency: p.freq,
+    priority: p.priority,
+  }));
+}

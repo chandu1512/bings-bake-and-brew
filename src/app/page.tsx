@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import Hero from "@/components/Hero";
@@ -6,6 +7,8 @@ import Heritage from "@/components/Heritage";
 import Regulars from "@/components/Regulars";
 import Awards from "@/components/Awards";
 import ShopCards from "@/components/ShopCards";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 import GiftCard from "@/components/GiftCard";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
 import { GIFT_CARD_URL, STAND_INS } from "@/lib/site";

@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { TOWNS } from "@/lib/seo";
 import MenuBoard from "@/components/MenuBoard";
 
 export const metadata: Metadata = {
-  title: "Menu and prices",
-  description:
-    "The full Bing's Bake & Brew menu with photos and prices for Amstel Square and Elkton: espresso, iced and frozen drinks, teas, the bakery case and bagels.",
+  title: "Menu | Coffee, Pastries and Cakes",
+  description: `Espresso, iced and frozen drinks, Bing's Bakery pastries and breakfast bagels with prices for both shops in ${TOWNS}.`,
+  alternates: { canonical: "/menu" },
+  openGraph: { title: "Menu | Coffee, Pastries and Cakes", description: `Espresso, iced and frozen drinks, Bing's Bakery pastries and breakfast bagels with prices for both shops in ${TOWNS}.`, url: "/menu" },
+  twitter: { title: "Menu | Coffee, Pastries and Cakes", description: `Espresso, iced and frozen drinks, Bing's Bakery pastries and breakfast bagels with prices for both shops in ${TOWNS}.` },
 };
 
 export default function MenuPage() {

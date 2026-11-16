@@ -5,8 +5,11 @@ import { ArrowUpRight, Lock } from "@/components/icons";
 import { GIFT_CARD_URL, STORES } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Gift cards",
+  title: "Gift Cards",
   description: "Buy a Bing's Bake & Brew gift card online through Toast.",
+  alternates: { canonical: "/gift-cards" },
+  openGraph: { title: "Gift Cards", description: "Buy a Bing's Bake & Brew gift card online, good at both shops.", url: "/gift-cards" },
+  twitter: { title: "Gift Cards", description: "Buy a Bing's Bake & Brew gift card online, good at both shops." },
 };
 
 export default function GiftCardsPage() {

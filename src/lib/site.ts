@@ -10,6 +10,17 @@ export const SHOP_NAME = "Bing's Bake & Brew";
 export const BAKERY_NAME = "Bing's Bakery";
 export const FOUNDED = 1871;
 
+/**
+ * Public address of the site, used for canonical URLs, Open Graph, the sitemap
+ * and structured data. Set NEXT_PUBLIC_SITE_URL in .env.local to override.
+ * TODO(owner): confirm the new site will live at bingsbakeandbrew.com (the
+ * domain the current site uses) before launch.
+ */
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://bingsbakeandbrew.com").replace(/\/$/, "");
+
+/** Bing's Bake & Brew's Facebook page, as linked from the previous site. */
+export const SOCIAL = ["https://www.facebook.com/bingsbakeandbrew/"];
+
 /** Both shops sit in US Eastern time. Open/closed is always worked out in it. */
 export const TIME_ZONE = "America/New_York";
 

@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import { TOWNS } from "@/lib/seo";
 import Image from "next/image";
 import ShopCards from "@/components/ShopCards";
 import { STAND_INS } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Visit: hours, maps and directions",
-  description:
-    "Find Bing's Bake & Brew at Amstel Square, 57 S Main St, Newark, DE and at 124 W Main St, Elkton, MD. Hours, maps, directions and phone.",
+  title: `Hours and Directions | ${TOWNS}`,
+  description: `Hours, addresses, phone numbers and Google Maps directions for Bing's Bake & Brew in ${TOWNS}.`,
+  alternates: { canonical: "/visit" },
+  openGraph: { title: `Hours and Directions | ${TOWNS}`, description: `Hours, addresses, phone numbers and Google Maps directions for Bing's Bake & Brew in ${TOWNS}.`, url: "/visit" },
+  twitter: { title: `Hours and Directions | ${TOWNS}`, description: `Hours, addresses, phone numbers and Google Maps directions for Bing's Bake & Brew in ${TOWNS}.` },
 };
 
 export default function VisitPage() {
