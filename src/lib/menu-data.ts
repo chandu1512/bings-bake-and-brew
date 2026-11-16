@@ -44,7 +44,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -230,7 +230,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -416,7 +416,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -742,7 +742,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -928,7 +928,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -1203,7 +1203,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -1389,7 +1389,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -1575,7 +1575,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -1756,7 +1756,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -1937,7 +1937,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -2118,7 +2118,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -2299,7 +2299,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -2480,7 +2480,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -2661,7 +2661,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -2842,7 +2842,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -3023,7 +3023,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -3204,7 +3204,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -3376,7 +3376,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -3557,7 +3557,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -3738,7 +3738,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -3919,7 +3919,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -4100,7 +4100,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -4411,7 +4411,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -4559,7 +4559,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -5333,7 +5333,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -5514,7 +5514,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -5695,7 +5695,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -5876,7 +5876,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -6057,7 +6057,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -6238,7 +6238,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -6419,7 +6419,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -6600,7 +6600,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -6772,7 +6772,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -6958,7 +6958,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -7144,7 +7144,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -7330,7 +7330,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -7516,7 +7516,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -7702,7 +7702,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -8017,7 +8017,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -8198,7 +8198,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -8379,7 +8379,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -8560,7 +8560,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -8741,7 +8741,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -8922,7 +8922,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -9103,7 +9103,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",
@@ -9405,7 +9405,7 @@ export const RAW_MENU: Record<"amstel" | "elkton", RawItem[]> = {
           "id": "275537237521",
           "name": "Add a flavor",
           "min": 0,
-          "max": 1,
+          "max": 3,
           "options": [
             {
               "id": "275537237401",

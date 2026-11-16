@@ -232,7 +232,7 @@ function Ticker({ value, className = "" }: { value: number; className?: string }
 
 /** The drink builder: a live 3D cup that changes as you choose. Bottom sheet on phones, wide modal on desktop. */
 export default function ItemSheet() {
-  const { customizing, customize, add } = useBag();
+  const { customizing, customize, add, editing, replace, open: openBag } = useBag();
   const { store } = useStore();
   const photo = useMenuPhoto();
   const reduce = useReducedMotion();
@@ -244,14 +244,17 @@ export default function ItemSheet() {
   const [env, setEnv] = useState({ three: false, desktop: false });
   const closeRef = useRef<HTMLButtonElement>(null);
 
+  // Fresh defaults for a new item; the line's own choices when editing one from the bag.
+  const editKey = editing?.key ?? null;
   useEffect(() => {
     if (!item) return;
-    setChoices(defaultChoices(item));
-    setQty(1);
-    setNote("");
+    setChoices(editing ? structuredClone(editing.choices) : defaultChoices(item));
+    setQty(editing?.qty ?? 1);
+    setNote(editing?.note ?? "");
     setTried(false);
     setEnv({ three: canRender3D(), desktop: window.matchMedia("(min-width: 1024px)").matches });
-  }, [item]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset only when the item or the edited line changes
+  }, [item, editKey]);
 
   useEffect(() => {
     lockScroll(!!item);
@@ -279,6 +282,12 @@ export default function ItemSheet() {
     if (!item) return;
     setTried(true);
     if (error) return;
+    if (editing) {
+      replace(editing.key, choices, note.trim() || undefined, qty);
+      customize(null);
+      openBag();
+      return;
+    }
     add(item.id, choices, note.trim() || undefined, qty);
     customize(null);
   };
@@ -355,7 +364,7 @@ export default function ItemSheet() {
                 <Stepper qty={qty} onChange={(n) => setQty(Math.max(1, Math.min(20, n)))} label={item.name} />
                 <button type="button" onClick={submit} className="btn btn-gold flex-1 justify-between">
                   <span className="inline-flex items-center gap-2">
-                    <Check /> Add to bag
+                    <Check /> {editing ? "Update bag" : "Add to bag"}
                   </span>
                   <Ticker value={each * qty} />
                 </button>

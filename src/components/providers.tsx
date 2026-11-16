@@ -37,6 +37,12 @@ type BagCtx = {
   /** The item whose options sheet is open, or null. */
   customizing: string | null;
   customize: (id: string | null) => void;
+  /** The bag line being edited in the options sheet, or null when adding a new one. */
+  editing: BagLine | null;
+  /** Reopen a bag line in the options sheet with its current choices. */
+  editLine: (key: string) => void;
+  /** Replace a bag line with new choices; merges into an identical line if one exists. */
+  replace: (key: string, choices: Record<string, string[]>, note: string | undefined, qty: number) => void;
   isOpen: boolean;
   open: () => void;
   close: () => void;
@@ -61,7 +67,12 @@ export function Providers({ children, localPhotos }: { children: React.ReactNode
   const [id, setId] = useState<StoreId>(DEFAULT_STORE);
   const [bags, setBags] = useState<Bags>({ amstel: [], elkton: [] });
   const [isOpen, setOpen] = useState(false);
-  const [customizing, customize] = useState<string | null>(null);
+  const [customizing, setCustomizing] = useState<string | null>(null);
+  const [editingKey, setEditingKey] = useState<string | null>(null);
+  const customize = useCallback((itemId: string | null) => {
+    setCustomizing(itemId);
+    setEditingKey(null);
+  }, []);
   const [ready, setReady] = useState(false);
   const photoSet = useMemo(() => new Set(localPhotos), [localPhotos]);
   const pathname = usePathname();
@@ -133,6 +144,27 @@ export function Providers({ children, localPhotos }: { children: React.ReactNode
       isOpen,
       customizing,
       customize,
+      editing: (editingKey && lines.find((l) => l.key === editingKey)) || null,
+      editLine: (key) => {
+        const line = lines.find((l) => l.key === key);
+        if (!line) return;
+        setCustomizing(line.id);
+        setEditingKey(key);
+      },
+      replace: (oldKey, choices, note, qty) => {
+        const at = bags[id].findIndex((l) => l.key === oldKey);
+        if (at < 0) return;
+        const itemId = bags[id][at].id;
+        const key = lineKey(itemId, choices, note);
+        edit((ls) => {
+          const rest = ls.filter((l) => l.key !== oldKey);
+          const same = rest.findIndex((l) => l.key === key);
+          if (same >= 0) return rest.map((l, i) => (i === same ? { ...l, qty: l.qty + qty } : l));
+          const next = [...rest];
+          next.splice(Math.min(at, next.length), 0, { key, id: itemId, qty, choices, note });
+          return next;
+        });
+      },
       open: () => setOpen(true),
       close: () => setOpen(false),
       add: (itemId, choices, note, qty = 1) => {
@@ -151,7 +183,7 @@ export function Providers({ children, localPhotos }: { children: React.ReactNode
       qtyOf: (itemId) => lines.filter((l) => l.id === itemId).reduce((n, l) => n + l.qty, 0),
       clear: () => edit(() => []),
     };
-  }, [bags, id, isOpen, customizing, edit]);
+  }, [bags, id, isOpen, customizing, customize, editingKey, edit]);
 
   const storeValue = useMemo(() => ({ id, store: STORES[id], setStore }), [id, setStore]);
 

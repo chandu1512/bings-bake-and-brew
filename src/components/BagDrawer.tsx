@@ -64,7 +64,7 @@ export function Stepper({
  * site through Stripe. Card details go straight to Stripe, never to our server.
  */
 export default function BagDrawer() {
-  const { isOpen, close, lines, total, hasUnpriced, count, setQty, clear } = useBag();
+  const { isOpen, close, lines, total, hasUnpriced, count, setQty, clear, editLine } = useBag();
   const { id: storeId } = useStore();
   const { store } = useStore();
   const photo = useMenuPhoto();
@@ -170,9 +170,24 @@ export default function BagDrawer() {
                               </span>
                             </div>
                             <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2">
-                              <p className="min-w-0 flex-1 text-[0.85rem] leading-snug text-ink-soft">
-                                {[...opts, l.note ? `“${l.note}”` : ""].filter(Boolean).join(" · ")}
-                              </p>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-[0.85rem] leading-snug text-ink-soft">
+                                  {[...opts, l.note ? `“${l.note}”` : ""].filter(Boolean).join(" · ")}
+                                </p>
+                                {item.groups?.length || item.base != null ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      close();
+                                      editLine(l.key);
+                                    }}
+                                    className="link-under mt-1.5 -ml-0.5 px-0.5 py-1 text-[0.85rem] font-semibold text-ink"
+                                    aria-label={`Edit ${item.name}`}
+                                  >
+                                    Edit
+                                  </button>
+                                ) : null}
+                              </div>
                               <Stepper small qty={l.qty} onChange={(n) => setQty(l.key, n)} label={item.name} />
                             </div>
                           </div>

@@ -52,6 +52,8 @@ for s, d in data.items():
 # ---- options (sizes, flavors, milks, extra shots) ----
 # Elkton: captured from each Seamless item page. Keyed by (category, name).
 raw_opts = json.load(open("data/scraped/elkton-seamless-options.json"))
+FLAVOR_MAX = 3
+
 def groups_of(o):
     gs = []
     for c in o.get("choice_category_list", []):
@@ -63,7 +65,12 @@ def groups_of(o):
         if "size" in name.lower() and any(not o["name"] for o in opts):
             labels = ["Small", "Medium", "Large"][-len(opts):] if len(opts) <= 3 else [f"Size {i+1}" for i in range(len(opts))]
             for o, l in zip(opts, labels): o["name"] = o["name"] or l
-        gs.append(dict(id=str(c["id"]), name=name, min=c.get("min_choice_options", 0), max=c.get("max_choice_options", 1), options=opts))
+        mx = c.get("max_choice_options", 1)
+        # Seamless caps flavors at one; in the shop you can mix syrups. Allow up to
+        # FLAVOR_MAX, each charged. TODO(owner): confirm the limit with Carla.
+        if "flavor" in name.lower() and c.get("min_choice_options", 0) == 0:
+            mx = max(mx, FLAVOR_MAX)
+        gs.append(dict(id=str(c["id"]), name=name, min=c.get("min_choice_options", 0), max=mx, options=opts))
     return gs
 elk_opts = {(o["menu_category_name"].strip(), o["name"].strip()): o for o in raw_opts.values()}
 # For Amstel, which DoorDash won't show options for: reuse Elkton's groups for the same drink.
