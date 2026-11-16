@@ -300,9 +300,36 @@ const BEANS_STRIP: [number, number, number, number][] = [
   [-0.46, 0.3, -1, 0.26], [0.0, 0.3, -1.5, 0.24], [0.02, -0.28, 0, 0.22], [0.46, 0.28, -1, 0.24], [-0.44, -0.34, -0.5, 0.2],
 ];
 
+/**
+ * The scene is laid out once, for a fixed reference frame, then cropped to the
+ * canvas like a CSS `object-fit: cover` photo. The stills in public/hero/poster
+ * are captures of exactly this reference frame and are shown with object-cover,
+ * so the still and the live scene line up on every screen size.
+ * Capture sizes (scripts/capture-hero-stills.mjs) must keep these aspect ratios.
+ */
+export const REF_ASPECT: Record<Mode, number> = { wide: 1600 / 1000, strip: 390 / 220 };
+const CAM_Z = 8;
+const BASE_FOV = 35;
+const REF_H = 2 * CAM_Z * Math.tan(THREE.MathUtils.degToRad(BASE_FOV / 2));
+
+/** World size of the reference frame, and the camera set to cover the canvas with it. */
+function useRefFrame(mode: Mode) {
+  const { size, camera } = useThree();
+  const ref = { width: REF_H * REF_ASPECT[mode], height: REF_H };
+  const aspect = size.width / Math.max(1, size.height);
+  useEffect(() => {
+    const cam = camera as THREE.PerspectiveCamera;
+    // Wider than the reference: show its full width and crop top and bottom. Narrower: crop the sides.
+    const visibleH = aspect >= REF_ASPECT[mode] ? ref.width / aspect : REF_H;
+    cam.fov = THREE.MathUtils.radToDeg(2 * Math.atan(visibleH / 2 / CAM_Z));
+    cam.updateProjectionMatrix();
+  }, [aspect, camera, mode, ref.width]);
+  return ref;
+}
+
 function Beans({ motion, mode }: { motion: MotionRef; mode: Mode }) {
   const group = useRef<THREE.Group>(null);
-  const { viewport } = useThree();
+  const viewport = useRefFrame(mode);
   const geo = useMemo(() => beanGeometry(mode === "wide" ? 28 : 14), [mode]);
   const bump = useMemo(() => crumbBump("bean"), []);
   const list = mode === "wide" ? BEANS_WIDE : BEANS_STRIP;
@@ -375,8 +402,8 @@ function Swap({ show, children }: { show: boolean; children: ReactNode }) {
 function Stage({ motion, mode, shop }: { motion: MotionRef; mode: Mode; shop: Shop }) {
   const left = useRef<THREE.Group>(null);
   const right = useRef<THREE.Group>(null);
-  const { viewport } = useThree();
   const wide = mode === "wide";
+  const viewport = useRefFrame(mode);
   const s = wide ? clamp(viewport.width / 8.4, 0.6, 1.1) : 1.22;
   const x = wide ? viewport.width * 0.355 : Math.min(viewport.width * 0.27, 2.5);
 
@@ -474,7 +501,7 @@ export default function HeroScene({ motion, mode, shop, onReady: onLive }: { mot
       <Canvas
         frameloop={!ready ? "never" : freeze ? "demand" : live ? "always" : "never"}
         dpr={[1, 1.5]}
-        camera={{ position: [0, 0, 8], fov: 35, near: 0.1, far: 40 }}
+        camera={{ position: [0, 0, CAM_Z], fov: BASE_FOV, near: 0.1, far: 40 }}
         gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
         style={{ pointerEvents: "none" }}
       >

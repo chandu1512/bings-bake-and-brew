@@ -7,8 +7,8 @@ import { useNow } from "./providers";
 
 /**
  * "Open now · closes 3pm", worked out live in the shops' own time zone.
- * Before the page has mounted it shows the plain opening hours instead, so
- * nothing is guessed on the server.
+ * Before the page has mounted it reserves the space with the (hidden) opening
+ * hours, so nothing is guessed on the server and nothing jumps.
  */
 export default function OpenBadge({
   store,
@@ -34,7 +34,9 @@ export default function OpenBadge({
           animate={{ opacity: 1, filter: "blur(0px)" }}
           exit={{ opacity: 0, filter: "blur(3px)" }}
           transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
-          className="inline-flex items-center gap-2 whitespace-nowrap"
+          // Until the visitor's clock is known, hold the space but show nothing, so the
+          // line fades in once as "Open now" or "Closed" instead of visibly swapping text.
+          className={`inline-flex items-center gap-2 whitespace-nowrap ${status ? "" : "invisible"}`}
         >
           <span
             aria-hidden

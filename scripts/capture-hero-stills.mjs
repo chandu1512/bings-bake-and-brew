@@ -21,7 +21,8 @@ const tmp = mkdtempSync(join(tmpdir(), "hero-stills-"));
 
 const LAYOUTS = [
   // Desktop: post-processing removes transparency, so capture with the hero's own background.
-  { kind: "wide", w: 1440, h: 900, dsf: 1.5, sel: ".hidden.lg\\:block .hero-canvas", opaque: true },
+  // Sizes must match REF_ASPECT in src/components/three/HeroScene.tsx (wide 1.6, strip 390/220).
+  { kind: "wide", w: 1600, h: 1000, dsf: 1.35, sel: ".hidden.lg\\:block .hero-canvas", opaque: true },
   // Phone strip: transparent, so it sits on the animated background like the live canvas.
   { kind: "strip", w: 390, h: 844, dsf: 3, sel: ".lg\\:hidden .hero-canvas", opaque: false },
 ];
@@ -35,10 +36,13 @@ for (const shop of ["amstel", "elkton"]) {
     await page.waitForFunction((s) => { const e = document.querySelector(s); return e && getComputedStyle(e).opacity === "1"; }, L.sel, { timeout: 30000 });
     await page.waitForTimeout(600);
     const png = join(tmp, `${shop}-${L.kind}.png`);
+    const box = await page.locator(L.sel).boundingBox();
+    const want = L.kind === "wide" ? 1.6 : 390 / 220;
+    if (!box || Math.abs(box.width / box.height - want) > 0.01) throw new Error(`${L.kind} canvas is ${box?.width}x${box?.height}, expected aspect ${want}`);
     if (L.opaque) {
       await page.addStyleTag({ content: "header, nav, [data-hero] .shell, [data-hero] .light-leak, [class^='hero-poster-'] { visibility: hidden !important }" });
       await page.waitForTimeout(100);
-      await page.screenshot({ path: png });
+      await page.screenshot({ path: png, clip: box });
     } else {
       await page.addStyleTag({
         content: `html, body, body * { background: transparent !important; background-image: none !important; box-shadow: none !important; mask-image: none !important; -webkit-mask-image: none !important; filter: none !important; visibility: hidden !important }
