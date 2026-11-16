@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type MutableRefObject, type ReactNode } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { RoundedBox } from "@react-three/drei";
 import * as THREE from "three";
 import DrinkCup, { Steam } from "./DrinkCup";
-import { Filmic, Studio } from "./Studio";
+import { Filmic, Studio, Warmup } from "./Studio";
 import { crumbBump, ribBump, speckle } from "./textures";
 
 /** Pointer (-1..1) and scroll progress (0..1), written by the hero, read every frame. */
@@ -431,6 +431,8 @@ function Stage({ motion, mode, shop }: { motion: MotionRef; mode: Mode; shop: Sh
 export default function HeroScene({ motion, mode, shop }: { motion: MotionRef; mode: Mode; shop: Shop }) {
   const wrap = useRef<HTMLDivElement>(null);
   const [live, setLive] = useState(true);
+  const [ready, setReady] = useState(false);
+  const onReady = useCallback(() => setReady(true), []);
 
   // Render only while the hero is on screen and the tab is visible.
   useEffect(() => {
@@ -445,15 +447,20 @@ export default function HeroScene({ motion, mode, shop }: { motion: MotionRef; m
   }, []);
 
   return (
-    <div ref={wrap} className="hero-canvas absolute inset-0">
+    <div
+      ref={wrap}
+      className="hero-canvas absolute inset-0 transition-opacity duration-700 ease-out"
+      style={{ opacity: ready ? 1 : 0 }}
+    >
       <Canvas
-        frameloop={live ? "always" : "never"}
+        frameloop={live && ready ? "always" : "never"}
         dpr={[1, 1.5]}
         camera={{ position: [0, 0, 8], fov: 35, near: 0.1, far: 40 }}
         gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
         style={{ pointerEvents: "none" }}
       >
         <Stage motion={motion} mode={mode} shop={shop} />
+        <Warmup onReady={onReady} />
       </Canvas>
     </div>
   );

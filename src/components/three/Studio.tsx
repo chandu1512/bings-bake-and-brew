@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect } from "react";
+import { useThree } from "@react-three/fiber";
 import { Environment, Lightformer } from "@react-three/drei";
 import { Bloom, EffectComposer, Noise, ToneMapping, Vignette } from "@react-three/postprocessing";
 import { BlendFunction, ToneMappingMode } from "postprocessing";
@@ -35,4 +37,23 @@ export function Filmic() {
       <ToneMapping mode={ToneMappingMode.ACES_FILMIC} />
     </EffectComposer>
   );
+}
+
+/**
+ * Compiles every material's shader before the first frame. Without this, three.js
+ * compiles them all inside the first render, which freezes the page for seconds
+ * on a phone. compileAsync uses KHR_parallel_shader_compile to do it off the main
+ * thread where the browser supports it. Hidden objects (the other shop) are
+ * included, so switching shops later doesn't stutter either.
+ */
+export function Warmup({ onReady }: { onReady: () => void }) {
+  const { gl, scene, camera } = useThree();
+  useEffect(() => {
+    let done = false;
+    const finish = () => { if (!done) { done = true; onReady(); } };
+    gl.compileAsync(scene, camera).then(finish, finish);
+    const fallback = window.setTimeout(finish, 6000);
+    return () => { done = true; window.clearTimeout(fallback); };
+  }, [gl, scene, camera, onReady]);
+  return null;
 }

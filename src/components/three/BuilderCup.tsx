@@ -1,10 +1,10 @@
 "use client";
 
-import { useRef } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import DrinkCup, { type DrinkLook } from "./DrinkCup";
-import { Filmic, Studio } from "./Studio";
+import { Filmic, Studio, Warmup } from "./Studio";
 
 function Turn({ look }: { look: DrinkLook }) {
   const g = useRef<THREE.Group>(null);
@@ -24,8 +24,12 @@ function Turn({ look }: { look: DrinkLook }) {
 
 /** The drink builder's live cup. `filmic` adds the desktop post-processing. */
 export default function BuilderCup({ look, filmic }: { look: DrinkLook; filmic: boolean }) {
+  const [ready, setReady] = useState(false);
+  const onReady = useCallback(() => setReady(true), []);
   return (
     <Canvas
+      frameloop={ready ? "always" : "never"}
+      style={{ opacity: ready ? 1 : 0, transition: "opacity 500ms ease-out" }}
       dpr={[1, 1.5]}
       camera={{ position: [0, 0.55, 6.4], fov: 32, near: 0.1, far: 30 }}
       gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
@@ -34,6 +38,7 @@ export default function BuilderCup({ look, filmic }: { look: DrinkLook; filmic: 
       <Studio res={filmic ? 256 : 128} />
       <Turn look={look} />
       {filmic && <Filmic />}
+      <Warmup onReady={onReady} />
     </Canvas>
   );
 }

@@ -19,15 +19,18 @@ const HeroScene = dynamic(() => import("./three/HeroScene"), { ssr: false });
 
 const EASE = [0.23, 1, 0.32, 1] as const;
 
-/** Real-time 3D only where it will run well; everyone else gets the still prints. */
+/**
+ * Real-time 3D only where it will run well; everyone else gets the still prints.
+ * Feature-detects WebGL without creating a context: a throwaway context is slow
+ * to make on phones and is never released.
+ */
 function canRender3D() {
   try {
     const nav = navigator as Navigator & { deviceMemory?: number; connection?: { saveData?: boolean } };
     if (nav.connection?.saveData) return false;
     if ((nav.hardwareConcurrency ?? 8) <= 2) return false;
     if ((nav.deviceMemory ?? 8) <= 2) return false;
-    const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
+    return "WebGL2RenderingContext" in window || "WebGLRenderingContext" in window;
   } catch {
     return false;
   }
@@ -73,7 +76,18 @@ export default function Hero() {
     return () => mq.removeEventListener("change", on);
   }, []);
 
-  useEffect(() => setThree(!reduce && canRender3D()), [reduce]);
+  // Start the 3D only once the page has painted and gone idle, so the logo,
+  // buttons and scrolling are ready first and the scene never delays them.
+  useEffect(() => {
+    if (reduce || !canRender3D()) return setThree(false);
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number; cancelIdleCallback?: (h: number) => void };
+    if (w.requestIdleCallback) {
+      const h = w.requestIdleCallback(() => setThree(true), { timeout: 1500 });
+      return () => w.cancelIdleCallback?.(h);
+    }
+    const t = window.setTimeout(() => setThree(true), 600);
+    return () => window.clearTimeout(t);
+  }, [reduce]);
 
   // Pointer tilt and scroll drift feed the 3D scene; the copy moves a touch slower than the page.
   useEffect(() => {
