@@ -73,9 +73,9 @@ export function Steam({ y = 1.4 }: { y?: number }) {
 }
 
 /** A syrup ribbon that winds up the inside of the cup and draws itself in. */
-function Ribbon({ color, index, lite }: { color: string; index: number; lite?: boolean }) {
+function Ribbon({ color, index, lite, settled }: { color: string; index: number; lite?: boolean; settled?: boolean }) {
   const mesh = useRef<THREE.Mesh>(null);
-  const drawn = useRef(0);
+  const drawn = useRef(settled ? 1 : 0);
   const geo = useMemo(() => {
     const pts: THREE.Vector3[] = [];
     for (let i = 0; i <= 60; i++) {
@@ -100,7 +100,11 @@ function Ribbon({ color, index, lite }: { color: string; index: number; lite?: b
   );
 }
 
-export default function DrinkCup({ kind, liquid, flavors, shots, size, lite }: DrinkLook) {
+/**
+ * `settled` starts the cup already poured, with the syrup wound in. The hero uses it:
+ * its first frame must match the still the page opens on, so nothing may animate in.
+ */
+export default function DrinkCup({ kind, liquid, flavors, shots, size, lite, settled = false }: DrinkLook & { settled?: boolean }) {
   const root = useRef<THREE.Group>(null);
   const liquidMat = useRef<THREE.MeshPhysicalMaterial>(null);
   const top = useRef<THREE.Mesh>(null);
@@ -110,7 +114,7 @@ export default function DrinkCup({ kind, liquid, flavors, shots, size, lite }: D
   const dome = useRef<THREE.Mesh>(null);
   const fill = useRef<THREE.Group>(null);
   const target = useMemo(() => new THREE.Color(liquid), [liquid]);
-  const state = useRef({ pour: 0, shotY: 1.6, scale: 0.8 + 0.2 * size });
+  const state = useRef({ pour: settled ? 1 : 0, shotY: 1.6, scale: settled ? 0.78 + 0.22 * size : 0.8 + 0.2 * size });
   const seg = lite ? 32 : 64;
 
   const wall = useMemo(
@@ -119,7 +123,12 @@ export default function DrinkCup({ kind, liquid, flavors, shots, size, lite }: D
   );
 
   // A new milk (or a new drink) pours in from the top.
-  useEffect(() => { state.current.pour = 0; }, [liquid]);
+  const firstLiquid = useRef(true);
+  useEffect(() => {
+    if (firstLiquid.current && settled) { firstLiquid.current = false; return; }
+    firstLiquid.current = false;
+    state.current.pour = 0;
+  }, [liquid, settled]);
   useEffect(() => { if (shots > 0) state.current.shotY = 1.6; }, [shots]);
 
   useFrame(({ clock }, dt) => {
@@ -178,7 +187,7 @@ export default function DrinkCup({ kind, liquid, flavors, shots, size, lite }: D
         </mesh>
         <group position={[0, -Y0 - 0.02, 0]}>
           {flavors.slice(0, 3).map((c, i) => (
-            <Ribbon key={`${c}-${i}`} color={c} index={i} lite={lite} />
+            <Ribbon key={`${c}-${i}`} color={c} index={i} lite={lite} settled={settled} />
           ))}
         </group>
       </group>

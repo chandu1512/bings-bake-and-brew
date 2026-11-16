@@ -383,7 +383,9 @@ function Stage({ motion, mode, shop }: { motion: MotionRef; mode: Mode; shop: Sh
   useFrame(({ clock }) => {
     const t = clock.elapsedTime;
     const m = motion.current;
-    const e = 1 - Math.pow(1 - Math.min(1, t / 1.1), 3);
+    // No intro move: the page opens on a still of this exact first frame, so the
+    // live scene must start from the same pose for the swap to be invisible.
+    const e = 1;
     if (left.current) {
       left.current.position.set(-x + m.px * 0.1, (wide ? -0.15 : -0.45) * s + Math.sin(t * 0.8) * 0.09 + m.scroll * 1.4 - (1 - e) * 0.6, 0);
       left.current.scale.setScalar(s * (0.85 + 0.15 * e));
@@ -402,7 +404,7 @@ function Stage({ motion, mode, shop }: { motion: MotionRef; mode: Mode; shop: Sh
         <Shadow y={-1.75} width={3.2} />
         <Swap show={!elkton}>
           <group rotation={[0.1, 0, -0.08]} scale={1.08}>
-            <DrinkCup kind="iced" liquid="#7b4a2b" flavors={["#d48a26"]} shots={0} size={1} lite={!wide} />
+            <DrinkCup kind="iced" liquid="#7b4a2b" flavors={["#d48a26"]} shots={0} size={1} lite={!wide} settled />
           </group>
         </Swap>
         <Swap show={elkton}>
@@ -428,11 +430,28 @@ function Stage({ motion, mode, shop }: { motion: MotionRef; mode: Mode; shop: Sh
   );
 }
 
+/** Reports once the first live frame has been drawn, so the still can be removed in the same instant. */
+function FirstFrame({ onDrawn }: { onDrawn: () => void }) {
+  const done = useRef(false);
+  useFrame(() => {
+    if (done.current) return;
+    done.current = true;
+    requestAnimationFrame(onDrawn);
+  });
+  return null;
+}
+
+/** Set by the still-capture script (scripts/capture-hero-stills.mjs): draw frame one and hold it. */
+const freezeForCapture = () => typeof window !== "undefined" && (window as Window & { __HERO_FREEZE__?: boolean }).__HERO_FREEZE__ === true;
+
 export default function HeroScene({ motion, mode, shop, onReady: onLive }: { motion: MotionRef; mode: Mode; shop: Shop; onReady?: () => void }) {
   const wrap = useRef<HTMLDivElement>(null);
   const [live, setLive] = useState(true);
   const [ready, setReady] = useState(false);
-  const onReady = useCallback(() => { setReady(true); onLive?.(); }, [onLive]);
+  const [drawn, setDrawn] = useState(false);
+  const onReady = useCallback(() => setReady(true), []);
+  const onDrawn = useCallback(() => { setDrawn(true); onLive?.(); }, [onLive]);
+  const freeze = freezeForCapture();
 
   // Render only while the hero is on screen and the tab is visible.
   useEffect(() => {
@@ -449,11 +468,11 @@ export default function HeroScene({ motion, mode, shop, onReady: onLive }: { mot
   return (
     <div
       ref={wrap}
-      className="hero-canvas absolute inset-0 transition-opacity duration-700 ease-out"
-      style={{ opacity: ready ? 1 : 0 }}
+      className="hero-canvas absolute inset-0"
+      style={{ opacity: drawn ? 1 : 0 }}
     >
       <Canvas
-        frameloop={live && ready ? "always" : "never"}
+        frameloop={!ready ? "never" : freeze ? "demand" : live ? "always" : "never"}
         dpr={[1, 1.5]}
         camera={{ position: [0, 0, 8], fov: 35, near: 0.1, far: 40 }}
         gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }}
@@ -461,6 +480,7 @@ export default function HeroScene({ motion, mode, shop, onReady: onLive }: { mot
       >
         <Stage motion={motion} mode={mode} shop={shop} />
         <Warmup onReady={onReady} />
+        {ready && <FirstFrame onDrawn={onDrawn} />}
       </Canvas>
     </div>
   );

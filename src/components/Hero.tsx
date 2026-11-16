@@ -42,19 +42,26 @@ const BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAA
  * devices that skip 3D). The live scene fades in over it once it is ready.
  * <picture> + media means each visitor downloads only the still for their layout.
  */
-function Poster({ wide, shop, hide }: { wide: boolean; shop: "amstel" | "elkton"; hide: boolean }) {
+function Poster({ wide, hide }: { wide: boolean; hide: boolean }) {
+  const kind = wide ? "wide" : "strip";
+  // Both shops' stills are in the HTML; CSS shows the one for html[data-store], which a
+  // tiny head script sets before first paint, so a returning Elkton visitor never sees Amstel's.
   return (
-    <picture>
-      <source media={wide ? "(min-width: 1024px)" : "(max-width: 1023.98px)"} srcSet={`/hero/poster/${shop}-${wide ? "wide" : "strip"}.webp`} />
-      <img
-        src={BLANK}
-        alt=""
-        fetchPriority="high"
-        decoding="async"
-        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out ${wide ? "object-center" : "object-[50%_50%]"}`}
-        style={{ opacity: hide ? 0 : 1 }}
-      />
-    </picture>
+    <>
+      {(["amstel", "elkton"] as const).map((shop) => (
+        <picture key={shop} className={`hero-poster-${shop}`}>
+          <source media={wide ? "(min-width: 1024px)" : "(max-width: 1023.98px)"} srcSet={`/hero/poster/${shop}-${kind}.webp`} />
+          <img
+            src={BLANK}
+            alt=""
+            fetchPriority="high"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ opacity: hide ? 0 : 1 }}
+          />
+        </picture>
+      ))}
+    </>
   );
 }
 
@@ -116,7 +123,7 @@ export default function Hero() {
   // The still is in the server HTML, so it paints with the page; the live scene mounts later on top.
   const visual = (isWide: boolean) => (
     <>
-      <Poster wide={isWide} shop={id} hide={live} />
+      <Poster wide={isWide} hide={live} />
       {wide === isWide && three && <HeroScene motion={motionRef} mode={isWide ? "wide" : "strip"} shop={id} onReady={onLive} />}
     </>
   );

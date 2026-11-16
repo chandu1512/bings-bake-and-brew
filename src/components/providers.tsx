@@ -106,6 +106,11 @@ export function Providers({ children, localPhotos }: { children: React.ReactNode
     if (ready) writeUrl(id);
   }, [pathname, id, ready]);
 
+  // html[data-store] picks the hero still in CSS (see the head script in layout.tsx).
+  useEffect(() => {
+    if (ready) document.documentElement.dataset.store = id;
+  }, [id, ready]);
+
   useEffect(() => {
     if (!ready) return;
     try {

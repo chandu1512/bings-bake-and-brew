@@ -389,6 +389,8 @@
 @keyframes hero-in { from { opacity: 0; } to { opacity: 1; } }
 /* Hero copy entrance: pure CSS so it plays on first paint, before any JavaScript arrives. */
 @keyframes hero-rise { from { opacity: 0; transform: translate3d(0, 18px, 0); } to { opacity: 1; transform: none; } }
+html[data-store="elkton"] .hero-poster-amstel,
+html:not([data-store="elkton"]) .hero-poster-elkton { display: none; }
 .hero-rise { animation: hero-rise 0.7s cubic-bezier(0.23, 1, 0.32, 1) both; }
 
 @keyframes ping {

@@ -46,7 +46,15 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Before first paint: mark the visitor's shop (link first, then remembered) so the hero shows the right still. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var s=new URLSearchParams(location.search).get("store")||localStorage.getItem("bings.store");if(s==="amstel"||s==="elkton")document.documentElement.dataset.store=s}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="relative min-h-screen antialiased">
         <script
           type="application/ld+json"
