@@ -4,6 +4,7 @@ import Hero from "@/components/Hero";
 import MenuBoard from "@/components/MenuBoard";
 import Heritage from "@/components/Heritage";
 import Regulars from "@/components/Regulars";
+import Awards from "@/components/Awards";
 import ShopCards from "@/components/ShopCards";
 import GiftCard from "@/components/GiftCard";
 import { ArrowRight, ArrowUpRight } from "@/components/icons";
@@ -69,6 +70,8 @@ export default function HomePage() {
       <Heritage />
 
       <Regulars />
+
+      <Awards />
 
       <div className="ornament shell pt-12 md:pt-16" aria-hidden>
         <span className="ornament-mark" />
