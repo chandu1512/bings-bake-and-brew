@@ -428,11 +428,11 @@ function Stage({ motion, mode, shop }: { motion: MotionRef; mode: Mode; shop: Sh
   );
 }
 
-export default function HeroScene({ motion, mode, shop }: { motion: MotionRef; mode: Mode; shop: Shop }) {
+export default function HeroScene({ motion, mode, shop, onReady: onLive }: { motion: MotionRef; mode: Mode; shop: Shop; onReady?: () => void }) {
   const wrap = useRef<HTMLDivElement>(null);
   const [live, setLive] = useState(true);
   const [ready, setReady] = useState(false);
-  const onReady = useCallback(() => setReady(true), []);
+  const onReady = useCallback(() => { setReady(true); onLive?.(); }, [onLive]);
 
   // Render only while the hero is on screen and the tab is visible.
   useEffect(() => {

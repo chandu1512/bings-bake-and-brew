@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -11,7 +11,6 @@ import { addressLines, directionsUrl } from "@/lib/site";
 import { useStore } from "./providers";
 import StoreToggle from "./StoreToggle";
 import OpenBadge from "./OpenBadge";
-import FilmCard from "./FilmCard";
 import { ArrowRight, Pin } from "./icons";
 import type { HeroMotion } from "./three/HeroScene";
 
@@ -36,25 +35,26 @@ function canRender3D() {
   }
 }
 
-/** Still fallback (reduced motion, low-power devices): the shops' own photos as film prints. */
-const STILLS = {
-  amstel: [
-    { src: "/photos/amstel/iced-drinks--bing-s-mocha-iced.jpg", caption: "Bing’s Mocha, iced" },
-    { src: "/photos/amstel/handmade-desserts--muffins.jpg", caption: "Muffins" },
-  ],
-  elkton: [
-    { src: "/photos/elkton/espresso--cafe-latte.jpg", caption: "Café latte" },
-    { src: "/photos/elkton/baked-goods--crumb-cake.jpg", caption: "Crumb cake" },
-  ],
-} as const;
+const BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
-function StillPair({ wide, shop }: { wide: boolean; shop: "amstel" | "elkton" }) {
-  const [a, b] = STILLS[shop];
+/**
+ * A still of the 3D scene, shown the instant the page opens (and for good on
+ * devices that skip 3D). The live scene fades in over it once it is ready.
+ * <picture> + media means each visitor downloads only the still for their layout.
+ */
+function Poster({ wide, shop, hide }: { wide: boolean; shop: "amstel" | "elkton"; hide: boolean }) {
   return (
-    <div className="absolute inset-0">
-      <FilmCard src={a.src} alt="" caption={a.caption} className={`absolute -rotate-[5deg] ${wide ? "left-[4.5%] top-[25%] w-[clamp(200px,20.5vw,310px)]" : "left-[6%] top-[4%] w-[37%]"}`} />
-      <FilmCard src={b.src} alt="" caption={b.caption} className={`absolute rotate-[4deg] ${wide ? "right-[4.5%] top-[21%] w-[clamp(190px,19.5vw,296px)]" : "right-[6%] top-[0%] w-[35%]"}`} />
-    </div>
+    <picture>
+      <source media={wide ? "(min-width: 1024px)" : "(max-width: 1023.98px)"} srcSet={`/hero/poster/${shop}-${wide ? "wide" : "strip"}.webp`} />
+      <img
+        src={BLANK}
+        alt=""
+        fetchPriority="high"
+        decoding="async"
+        className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-out ${wide ? "object-center" : "object-[50%_50%]"}`}
+        style={{ opacity: hide ? 0 : 1 }}
+      />
+    </picture>
   );
 }
 
@@ -66,6 +66,8 @@ export default function Hero() {
   const motionRef = useRef<HeroMotion>({ px: 0, py: 0, scroll: 0 });
   const [wide, setWide] = useState<boolean | null>(null);
   const [three, setThree] = useState(false);
+  const [live, setLive] = useState(false);
+  const onLive = useCallback(() => setLive(true), []);
   const [l1, l2] = addressLines(store);
 
   useEffect(() => {
@@ -111,19 +113,16 @@ export default function Hero() {
     };
   }, [reduce]);
 
-  const visual = (isWide: boolean) =>
-    wide === isWide ? (
-      three ? <HeroScene motion={motionRef} mode={isWide ? "wide" : "strip"} shop={id} /> : <StillPair wide={isWide} shop={id} />
-    ) : null;
+  // The still is in the server HTML, so it paints with the page; the live scene mounts later on top.
+  const visual = (isWide: boolean) => (
+    <>
+      <Poster wide={isWide} shop={id} hide={live} />
+      {wide === isWide && three && <HeroScene motion={motionRef} mode={isWide ? "wide" : "strip"} shop={id} onReady={onLive} />}
+    </>
+  );
 
-  const rise = (delay: number) =>
-    reduce
-      ? {}
-      : {
-          initial: { opacity: 0, y: 18 },
-          animate: { opacity: 1, y: 0 },
-          transition: { duration: 0.7, ease: EASE, delay },
-        };
+  // CSS, not JS: the copy is visible on first paint instead of waiting for the page's scripts.
+  const rise = (delay: number) => ({ animationDelay: `${delay}s` });
 
   return (
     <section
@@ -141,7 +140,7 @@ export default function Hero() {
         ref={content}
         className="shell relative flex flex-col items-center pb-12 pt-[92px] text-center md:pt-[112px] lg:min-h-[max(100svh,800px)] lg:justify-center lg:pb-20"
       >
-        <motion.h1 {...rise(0)} className="m-0">
+        <motion.h1 style={rise(0)} className="hero-rise m-0">
           <Image
             src="/brand/bings-bake-n-brew-coffee-logo-306-269.png"
             alt="Bing's Bake & Brew"
@@ -152,7 +151,7 @@ export default function Hero() {
           />
         </motion.h1>
 
-        <motion.p {...rise(0.05)} className="ornament mt-1 w-full max-w-[420px] !text-gold lg:mt-2">
+        <motion.p style={rise(0.05)} className="hero-rise ornament mt-1 w-full max-w-[420px] !text-gold lg:mt-2">
           <span className="script foil-text px-1 text-[1.7rem] lg:text-[2.2rem]">Since 1871</span>
         </motion.p>
 
@@ -160,19 +159,19 @@ export default function Hero() {
           {visual(false)}
         </div>
 
-        <motion.p {...rise(0.08)} className="font-display mt-2 max-w-[20ch] text-[clamp(1.6rem,2.9vw,2.5rem)] leading-[1.04] [text-shadow:0_2px_24px_rgba(0,0,0,0.6)] lg:mt-5">
+        <motion.p style={rise(0.08)} className="hero-rise font-display mt-2 max-w-[20ch] text-[clamp(1.6rem,2.9vw,2.5rem)] leading-[1.04] [text-shadow:0_2px_24px_rgba(0,0,0,0.6)] lg:mt-5">
           Coffee and Bing&rsquo;s pastries, <em className="font-normal italic text-gold-light">on two Main Streets.</em>
         </motion.p>
-        <motion.p {...rise(0.12)} className="mt-3 hidden max-w-[46ch] text-[1.05rem] leading-relaxed text-white/80 sm:block">
+        <motion.p style={rise(0.12)} className="hero-rise mt-3 hidden max-w-[46ch] text-[1.05rem] leading-relaxed text-white/80 sm:block">
           The coffee bar of Bing&rsquo;s Bakery, Delaware&rsquo;s longest-running bakery, est. 1871. Pick your shop for its menu,
           hours and pickup.
         </motion.p>
 
-        <motion.div {...rise(0.16)} className="mt-5 w-full max-w-[440px] rounded-full backdrop-blur-md lg:mt-7">
+        <motion.div style={rise(0.16)} className="hero-rise mt-5 w-full max-w-[440px] rounded-full backdrop-blur-md lg:mt-7">
           <StoreToggle id="hero" tone="dark" />
         </motion.div>
 
-        <motion.div {...rise(0.2)} className="mt-4 flex min-h-[64px] flex-col items-center">
+        <motion.div style={rise(0.2)} className="hero-rise mt-4 flex min-h-[64px] flex-col items-center">
           <OpenBadge store={store} tone="dark" className="text-[1.05rem]" />
           <AnimatePresence mode="wait" initial={false}>
             <motion.p
@@ -194,7 +193,7 @@ export default function Hero() {
           </AnimatePresence>
         </motion.div>
 
-        <motion.div {...rise(0.25)} className="mt-5 grid w-full max-w-[440px] grid-cols-2 gap-3 sm:flex sm:w-auto sm:max-w-none">
+        <motion.div style={rise(0.25)} className="hero-rise mt-5 grid w-full max-w-[440px] grid-cols-2 gap-3 sm:flex sm:w-auto sm:max-w-none">
           <Link href="/order" className="btn btn-cherry !px-4 sm:!px-6">
             Order pickup <ArrowRight className="nudge" />
           </Link>
