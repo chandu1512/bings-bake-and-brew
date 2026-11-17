@@ -3,7 +3,7 @@
  *
  * Bing's Bake & Brew has two shops on this site: Amstel Square (Newark, DE)
  * and Elkton (MD). Edit a shop here and every page, the footer, the maps,
- * the open-now badge and the Toast checkout link follow.
+ * the open-now badge and the Toast ordering links follow.
  */
 
 export const SHOP_NAME = "Bing's Bake & Brew";
@@ -43,8 +43,8 @@ export type Store = {
   phone: string;
   /** Sunday first. */
   hours: DayHours[];
-  /** Toast online ordering for this shop. Checkout hands off here. */
-  toastUrl: string;
+  /** This shop's Toast online ordering page. Every Order button for the shop opens it. */
+  toastOrderUrl: string;
   /** One plain line about the shop. Facts only. */
   blurb: string;
   /**
@@ -105,7 +105,8 @@ export const STORES: Record<StoreId, Store> = {
     zip: "19711",
     phone: "(302) 751-3177",
     hours: monSat(h(7, 30), h(15)),
-    toastUrl: "https://www.toasttab.com/bingsbakeandbrew",
+    // TODO(owner): confirm Amstel Square's exact Toast ordering URL. The brand page is used for now.
+    toastOrderUrl: "https://www.toasttab.com/bingsbakeandbrew",
     blurb: "On South Main by the University of Delaware. Bagels as well as the bakery case.",
     photo: { src: "/photos/shop-amstel.jpg", alt: "Three cups of coffee held together over a cafe table" },
     video: HERO_VIDEOS.brew,
@@ -123,7 +124,9 @@ export const STORES: Record<StoreId, Store> = {
     // the shop itself. Set it to "" to hide every phone link for Elkton.
     phone: "(667) 215-0237",
     hours: monSat(h(7, 30), h(16)),
-    toastUrl: "https://toast.app/r/bings-bakery-3-124-w-main-street",
+    // TODO(owner): confirm Elkton's exact Toast ordering URL. The brand page is used for now
+    // (an earlier search also turned up https://toast.app/r/bings-bakery-3-124-w-main-street).
+    toastOrderUrl: "https://www.toasttab.com/bingsbakeandbrew",
     blurb: "Opened in 2025 on West Main, across from Sonny's Deli. Open an hour later.",
     photo: { src: "/photos/shop-elkton.jpg", alt: "Cafe tables and chairs in a sunlit room" },
     video: HERO_VIDEOS.bake,
@@ -183,8 +186,8 @@ export function telHref(phone: string) {
 }
 
 export const NAV = [
-  { href: "/menu", label: "Menu" },
-  { href: "/order", label: "Order pickup" },
-  { href: "/gift-cards", label: "Gift cards" },
-  { href: "/visit", label: "Visit" },
+  { href: "/menu/", label: "Menu" },
+  { href: "/order/", label: "Order pickup" },
+  { href: "/gift-cards/", label: "Gift cards" },
+  { href: "/visit/", label: "Visit" },
 ];

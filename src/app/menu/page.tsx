@@ -10,7 +10,7 @@ import MenuChooserRedirect from "@/components/MenuChooserRedirect";
 const title = `Menu | ${TOWNS}`;
 const description = `Pick your shop to see its menu and prices: Bing's Bake & Brew in ${TOWNS}.`;
 
-export const metadata: Metadata = pageMeta({ title, description, path: "/menu" });
+export const metadata: Metadata = pageMeta({ title, description, path: "/menu/" });
 
 /** Chooser: one big card per shop. A visitor who has already picked a shop goes straight to its menu. */
 export default function MenuChooserPage() {
@@ -25,7 +25,7 @@ export default function MenuChooserPage() {
           const [l1, l2] = addressLines(s);
           return (
             <li key={id}>
-              <Link href={`/menu/${id}`} className="card zoom-frame group flex h-full flex-col overflow-hidden">
+              <Link href={`/menu/${id}/`} className="card zoom-frame group flex h-full flex-col overflow-hidden">
                 <div className="gloss relative aspect-[16/9] overflow-hidden bg-porcelain-deep">
                   <Image src={s.photo.src} alt={s.photo.alt} fill sizes="(min-width: 1024px) 50vw, 100vw" className="zoom object-cover" />
                 </div>

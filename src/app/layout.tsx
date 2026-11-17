@@ -3,8 +3,6 @@ import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
-import BagDrawer from "@/components/BagDrawer";
-import ItemSheet from "@/components/ItemSheet";
 import { Providers } from "@/components/providers";
 import { SHOP_NAME, SITE_URL } from "@/lib/site";
 import { OG_IMAGE, TOWNS, localBusinessJsonLd } from "@/lib/seo";
@@ -57,8 +55,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Nav />
           <main id="main">{children}</main>
           <Footer />
-          <BagDrawer />
-          <ItemSheet />
         </Providers>
       </body>
     </html>

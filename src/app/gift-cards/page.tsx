@@ -8,7 +8,7 @@ import { GIFT_CARD_URL, STORES } from "@/lib/site";
 export const metadata: Metadata = pageMeta({
   title: "Gift Cards",
   description: "Buy a Bing's Bake & Brew gift card online through Toast, good at both shops.",
-  path: "/gift-cards",
+  path: "/gift-cards/",
 });
 
 export default function GiftCardsPage() {

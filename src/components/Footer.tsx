@@ -59,9 +59,9 @@ export default function Footer() {
                   </li>
                 )}
                 <li>
-                  <Link href={`/order?store=${id}`} className="link-under py-2">
+                  <a href={s.toastOrderUrl} target="_blank" rel="noopener noreferrer" className="link-under py-2">
                     Order pickup
-                  </Link>
+                  </a>
                 </li>
               </ul>
             </div>

@@ -101,25 +101,25 @@ Shop and atmosphere photos are set in `src/lib/site.ts` (`photo`, `photoAlt2`,
 actual hamantaschen (a cherry pastry stands in), and the Blackberry Mocha photo
 is a plain mocha.
 
-Remote images are allowed in `next.config.ts` (`images.remotePatterns`) for
-`images.unsplash.com` and `images.pexels.com`.
+All stand-in photos are local files in `public/photos`; nothing loads from Unsplash.
 
-## Ordering and payment: on this site (Stripe)
+## Ordering: Toast (static site)
 
-1. The customer picks a shop and taps an item. Drinks open an options sheet with size, milk, flavor, extra shot and a note.
-2. **Checkout** (`/checkout`) asks for name, phone, email, pickup time and an optional tip, then shows Stripe's card form with Apple Pay and Google Pay.
-3. The server re-prices the bag from the menu data (`src/lib/pricing.ts`), creates a Stripe PaymentIntent and saves the order. The browser never sets the amount.
-4. Once Stripe confirms payment (the confirmation page checks, and the webhook catches anyone who closes the tab), the order is marked paid and the shop is alerted:
-   - **Live orders page** `/staff`: password from `STAFF_PASSWORD`. New orders chime. Tap *Mark ready*, then *Picked up*.
-   - **Email** through Resend, and **text** through Twilio, if their keys are set.
+This branch (`static-toast`) is a fully static site for SiteGround. There is no
+cart, checkout or server. Every Order button opens the shop's Toast online
+ordering page, set as `toastOrderUrl` for each shop in `src/lib/site.ts`. The
+menu pages keep prices for browsing. Gift cards are sold on Toast too.
 
-Without Stripe keys the site runs in **test mode**: checkout places a test order, nobody is charged, and staff see it marked "TEST". Copy `.env.example` to `.env.local` to set keys.
+The earlier version with on-site Stripe checkout, the live `/staff` orders page
+and email/text alerts is saved on the `main` branch.
 
-Tax: Elkton charges 6% (Maryland) and Amstel 0% (Delaware), set in `TAX_RATE` in `src/lib/pricing.ts`. Have the accountant confirm both.
+## Building and hosting
 
-Orders are saved as JSON files in `data/orders/`. That works on one server. On Vercel or another serverless host, swap the functions in `src/lib/server/orders.ts` for a database.
-
-Web orders don't appear in Toast. Gift cards are still sold through Toast's gift card page.
+`npm run build` writes the whole site to `out/` (`output: "export"`,
+`trailingSlash: true`, unoptimized images in `next.config.ts`). Upload the
+contents of `out/` to the site root on SiteGround. `out/.htaccess` comes from
+`public/.htaccess`: HTTPS and one host, 301s from the old WordPress URLs, 410s
+for old theme demo content, the 404 page, MIME types for the videos, and caching.
 
 ## Maps
 
@@ -159,7 +159,7 @@ is switched off.
 - Confirm Elkton's pastry list and whether Elkton sells anything savory.
 - Prices for Blackberry Mocha, bagels, raspberry strip and plain croissant.
 - Confirm Amstel's size, flavor and milk prices (copied from Elkton).
-- Stripe keys, a staff password, and optionally Resend and Twilio keys (see `.env.example`).
+- The exact Toast ordering URL for each shop (both use the brand page for now).
 - Real photos of both shops, the drinks and the bakery case.
 
 ## Real menus and photos (scraped 2026-11-15)

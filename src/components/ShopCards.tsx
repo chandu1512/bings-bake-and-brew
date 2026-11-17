@@ -1,24 +1,18 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { STORE_IDS, STORES, addressLines, directionsUrl, mapEmbedUrl, telHref, type StoreId } from "@/lib/site";
+import { STORE_IDS, STORES, addressLines, directionsUrl, mapEmbedUrl, telHref } from "@/lib/site";
 import { DAY_NAMES, clock, hoursSummary, shopTime } from "@/lib/hours";
 import { useNow, useStore } from "./providers";
 import OpenBadge from "./OpenBadge";
-import { ArrowRight, ArrowUpRight, Phone, Pin } from "./icons";
+import OrderLink from "./OrderLink";
+import { ArrowUpRight, Phone, Pin } from "./icons";
 
 /** Both shops side by side. `full` adds the map and the whole week of hours. */
 export default function ShopCards({ full = false }: { full?: boolean }) {
-  const { id: active, setStore } = useStore();
-  const router = useRouter();
+  const { id: active } = useStore();
   const now = useNow();
   const today = now ? shopTime(now).day : -1;
-
-  const orderFrom = (id: StoreId) => {
-    setStore(id);
-    router.push("/order");
-  };
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -82,9 +76,9 @@ export default function ShopCards({ full = false }: { full?: boolean }) {
                     <Phone /> {s.phone}
                   </a>
                 )}
-                <button type="button" onClick={() => orderFrom(id)} className="btn btn-glass">
-                  Order from {id === "amstel" ? "Amstel" : "Elkton"} <ArrowRight className="nudge" />
-                </button>
+                <OrderLink store={id} className="btn btn-cherry">
+                  {`Order from ${id === "amstel" ? "Amstel" : "Elkton"}`}
+                </OrderLink>
               </div>
             </div>
 

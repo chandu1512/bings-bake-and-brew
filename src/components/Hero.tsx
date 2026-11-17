@@ -1,8 +1,7 @@
 import Image from "next/image";
-import Link from "next/link";
 import HeroVideo from "./HeroVideo";
 import HeroDepth from "./HeroDepth";
-import { ArrowRight } from "./icons";
+import OrderLink from "./OrderLink";
 
 /**
  * Home page hero: logo, "Since 1871", the selected shop's looping video in the
@@ -44,9 +43,7 @@ export default function Hero() {
         </p>
 
         <div className="relative z-10 mt-7 flex justify-center">
-          <Link href="/order" className="btn btn-cherry !px-6">
-            Order pickup <ArrowRight className="nudge" />
-          </Link>
+          <OrderLink className="btn btn-cherry !px-6">Order pickup</OrderLink>
         </div>
       </div>
       <HeroDepth layer="front" />

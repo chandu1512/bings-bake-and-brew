@@ -36,6 +36,14 @@ RedirectMatch 301 ^/about-us/?$ /
 RedirectMatch 301 ^/about-me/?$ /
 RedirectMatch 301 ^/home-1/?$ /
 RedirectMatch 301 ^/wp-sitemap\.xml$ /sitemap.xml
+# Older links from this site itself.
+RedirectMatch 301 ^/location/?$ /visit/
+<IfModule mod_rewrite.c>
+  # /menu?store=elkton (the old shop-picker link) -> /menu/elkton/
+  RewriteEngine On
+  RewriteCond %{QUERY_STRING} (^|&)store=(amstel|elkton)(&|$)
+  RewriteRule ^menu/?$ /menu/%2/? [R=301,L]
+</IfModule>
 
 # ---------- 3. 410 Gone: old WordPress theme demo content ----------
 RedirectMatch 410 ^/elements/
@@ -60,18 +68,10 @@ RedirectMatch 410 ^/(category|tag|portfolio-category|portfolio-tag|testimonials-
 ErrorDocument 404 /404.html
 ErrorDocument 410 /404.html
 
-# ---------- 5. Clean page URLs for an exported site ----------
-# /menu/amstel and /menu/amstel/ are served from menu/amstel.html.
-# DirectorySlash Off stops Apache bouncing /menu to /menu/ just because a
-# menu/ folder exists next to menu.html.
-DirectorySlash Off
-<IfModule mod_rewrite.c>
-  # Switched on here too, so these rules never depend on section 1 being present.
-  RewriteEngine On
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{DOCUMENT_ROOT}/$1.html -f
-  RewriteRule ^(.+?)/?$ /$1.html [L]
-</IfModule>
+# ---------- 5. Page URLs ----------
+# The export writes each page as a folder with index.html (menu/amstel/index.html).
+# Apache serves /menu/amstel/ from it and adds the trailing slash to /menu/amstel
+# by itself (DirectorySlash is on by default), so no rewrite is needed here.
 
 # ---------- 6. MIME types ----------
 <IfModule mod_mime.c>

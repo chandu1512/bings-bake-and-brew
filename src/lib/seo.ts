@@ -44,7 +44,7 @@ function shopNode(store: Store) {
     openingHoursSpecification: openingHours(store),
     servesCuisine: ["Coffee", "Bakery"],
     priceRange: "$",
-    menu: `${SITE_URL}/menu/${store.id}`,
+    menu: `${SITE_URL}/menu/${store.id}/`,
     acceptsReservations: false,
     hasMap: directionsUrl(store),
     parentOrganization: { "@id": `${SITE_URL}/#brand` },

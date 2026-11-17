@@ -4,56 +4,13 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { menuFor, money, type CategoryId, type MenuCategory, type MenuItem } from "@/lib/menu";
-import { useBag, useMenuPhoto, useStore } from "./providers";
+import { useMenuPhoto, useStore } from "./providers";
 import { STORES, type StoreId } from "@/lib/site";
 import StoreToggle from "./StoreToggle";
 import OpenBadge from "./OpenBadge";
-import { Stepper } from "./BagDrawer";
-import { Plus } from "./icons";
+import OrderLink from "./OrderLink";
 
 const EASE = [0.23, 1, 0.32, 1] as const;
-
-function AddControl({ item }: { item: MenuItem }) {
-  const { add, qtyOf, lines, setQty, customize } = useBag();
-  // Items with sizes, milks or flavors open the options sheet instead of adding straight away.
-  const addOne = () => (item.groups?.length ? customize(item.id) : add(item.id));
-  const qty = qtyOf(item.id);
-  // The stepper edits the most recent line for this item.
-  const line = [...lines].reverse().find((l) => l.id === item.id);
-
-  return (
-    <div className="relative flex h-11 items-center justify-end">
-      <AnimatePresence mode="popLayout" initial={false}>
-        {qty > 0 && line ? (
-          <motion.div
-            key="step"
-            initial={{ opacity: 0, scale: 0.9, filter: "blur(4px)" }}
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, scale: 0.9, filter: "blur(4px)" }}
-            transition={{ duration: 0.2, ease: EASE }}
-          >
-            <Stepper qty={qty} label={item.name} onChange={(n) => (n > qty ? addOne() : setQty(line.key, line.qty - 1))} />
-          </motion.div>
-        ) : (
-          <motion.button
-            key="add"
-            type="button"
-            onClick={addOne}
-            aria-label={item.groups?.length ? `Choose options for ${item.name}` : `Add ${item.name} to your bag`}
-            initial={{ opacity: 0, scale: 0.9, filter: "blur(4px)" }}
-            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-            exit={{ opacity: 0, scale: 0.9, filter: "blur(4px)" }}
-            whileTap={{ scale: 0.94 }}
-            transition={{ duration: 0.2, ease: EASE }}
-            className="btn btn-glass !min-h-[44px] !gap-1.5 !px-4 text-[0.95rem]"
-          >
-            <Plus size={16} /> Add
-          </motion.button>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
 
 function ItemCard({ item, index }: { item: MenuItem; index: number }) {
   const photo = useMenuPhoto();
@@ -99,7 +56,6 @@ function ItemCard({ item, index }: { item: MenuItem; index: number }) {
               <span className="text-[0.92rem] font-semibold text-ink-soft">Ask at counter</span>
             )}
           </p>
-          <AddControl item={item} />
         </div>
       </div>
     </motion.li>
@@ -162,12 +118,13 @@ export default function MenuBoard({
             menu
           </H>
           <p className="lede mt-4">
-            Choose your size, milk and flavor, pay right here, and pick it up.
+            Prices for browsing. To order ahead for pickup, use the shop&rsquo;s Toast page.
           </p>
         </div>
         <div className="flex flex-col gap-3 lg:items-end">
           <StoreToggle id={`board-${mode}`} className="w-full sm:w-[400px]" />
           <OpenBadge store={store} className="text-[0.95rem]" />
+          <OrderLink store={id} className="btn btn-cherry">{`Order from ${store.name} on Toast`}</OrderLink>
         </div>
       </div>
 

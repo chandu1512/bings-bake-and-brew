@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const where = s.name === s.city ? s.town : `${s.name}, ${s.town}`;
   const title = `Menu | ${SHOP_NAME} ${where}`;
   const description = `Espresso, iced and frozen drinks, Bing's Bakery pastries and breakfast with prices at Bing's Bake & Brew ${s.name}, ${s.town}.`;
-  return pageMeta({ title, description, path: `/menu/${store}`, absolute: true });
+  return pageMeta({ title, description, path: `/menu/${store}/`, absolute: true });
 }
 
 export default async function StoreMenuPage({ params }: Params) {

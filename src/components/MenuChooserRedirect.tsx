@@ -9,7 +9,7 @@ export default function MenuChooserRedirect() {
   const { id, chosen, ready } = useStore();
   const router = useRouter();
   useEffect(() => {
-    if (ready && chosen) router.replace(`/menu/${id}`);
+    if (ready && chosen) router.replace(`/menu/${id}/`);
   }, [ready, chosen, id, router]);
   return null;
 }

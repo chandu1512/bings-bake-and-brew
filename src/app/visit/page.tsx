@@ -8,7 +8,7 @@ import { hoursSummary } from "@/lib/hours";
 export const metadata: Metadata = pageMeta({
   title: `Hours and Directions | ${TOWNS}`,
   description: `Hours, addresses, phone numbers and Google Maps directions for Bing's Bake & Brew in ${TOWNS}.`,
-  path: "/visit",
+  path: "/visit/",
 });
 
 export default function VisitPage() {

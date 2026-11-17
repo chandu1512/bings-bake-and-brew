@@ -6,15 +6,15 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { NAV, SHOP_NAME } from "@/lib/site";
-import { useBag, useStore } from "./providers";
+import { useStore } from "./providers";
+import OrderLink from "./OrderLink";
 import StoreToggle from "./StoreToggle";
 import OpenBadge from "./OpenBadge";
-import { BagIcon, Close, MenuIcon } from "./icons";
+import { Close, MenuIcon } from "./icons";
 import { lockScroll } from "./SmoothScroll";
 
 export default function Nav() {
   const pathname = usePathname();
-  const { count, open } = useBag();
   const { store } = useStore();
   const [menu, setMenu] = useState(false);
   const reduce = useReducedMotion();
@@ -51,7 +51,7 @@ export default function Nav() {
 
           <nav aria-label="Main" className="mr-auto hidden items-center gap-1 lg:flex">
             {NAV.map((n) => {
-              const on = pathname === n.href;
+              const on = (pathname ?? "").replace(/\/$/, "") === n.href.replace(/\/$/, "");
               return (
                 <Link
                   key={n.href}
@@ -77,29 +77,7 @@ export default function Nav() {
           <OpenBadge store={store} tone={dark ? "dark" : "light"} showHours className="hidden text-sm xl:inline-flex" />
           <StoreToggle id="nav" size="sm" tone={dark ? "dark" : "light"} className="hidden md:grid" />
 
-          <button
-            type="button"
-            onClick={open}
-            aria-label={`Open your bag, ${count} ${count === 1 ? "item" : "items"}`}
-            className={`btn ${dark ? "btn-glass" : "btn-ink"} !min-h-[42px] !px-4 text-sm`}
-          >
-            <BagIcon size={18} />
-            <span className="hidden sm:inline">Bag</span>
-            <AnimatePresence mode="popLayout" initial={false}>
-              <motion.span
-                key={count}
-                initial={{ opacity: 0, y: 6, scale: 0.9 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -6, scale: 0.9 }}
-                transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
-                className={`tnum grid h-[22px] min-w-[22px] place-items-center rounded-full px-1.5 text-xs font-bold ${
-                  count ? "bg-cherry-light text-white" : dark ? "bg-ink/10 text-ink" : "bg-white/15 text-white/80"
-                }`}
-              >
-                {count}
-              </motion.span>
-            </AnimatePresence>
-          </button>
+          <OrderLink className="btn btn-cherry !min-h-[42px] !px-4 text-sm">Order</OrderLink>
 
           <button
             type="button"

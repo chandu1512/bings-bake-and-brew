@@ -1,8 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowRight } from "./icons";
+import OrderLink from "./OrderLink";
 
 /**
  * The baker mascot on the history timeline. Desktop (horizontal timeline): when
@@ -43,9 +42,7 @@ function Bubble({ onReplay, showReplay }: { onReplay?: () => void; showReplay: b
   return (
     <div className="chef-bubble relative rounded-3xl bg-porcelain-light px-5 py-4 text-ink shadow-[0_18px_40px_-18px_rgba(0,0,0,0.7)]">
       <p className="font-display text-[1.5rem] leading-none">Fresh today!</p>
-      <Link href="/order" className="btn btn-cherry mt-3 !min-h-[44px] !px-4 text-[0.95rem]">
-        Order pickup <ArrowRight className="nudge" />
-      </Link>
+      <OrderLink className="btn btn-cherry mt-3 !min-h-[44px] !px-4 text-[0.95rem]">Order pickup</OrderLink>
       {showReplay && onReplay && (
         <button type="button" onClick={onReplay} className="link-under ml-3 py-2 text-[0.9rem] font-semibold text-ink-soft">
           Walk again
