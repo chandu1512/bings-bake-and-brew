@@ -273,7 +273,7 @@ export default function Checkout() {
           {priced.map(({ line, p }) => (
             <li key={line.key} className="flex gap-3 py-3">
               <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-porcelain-deep">
-                <Image src={photo(line.id, 200, 200)} alt="" fill sizes="56px" className="object-cover" />
+                <Image src={photo(line.id)} alt={itemById(line.id)?.name ?? "Menu item"} fill sizes="56px" className="object-cover" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex justify-between gap-3">

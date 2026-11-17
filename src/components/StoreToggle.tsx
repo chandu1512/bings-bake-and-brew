@@ -56,7 +56,9 @@ export default function StoreToggle({
                 layoutId={`store-pill-${id}`}
                 transition={reduce ? { duration: 0 } : { type: "spring", duration: 0.5, bounce: 0.18 }}
                 className={`absolute inset-0 rounded-full ${
-                  dark
+                  !lg && !dark
+                    ? "bg-ink shadow-[0_8px_18px_-10px_rgba(29,20,17,0.7)]"
+                    : dark
                     ? "bg-gradient-to-b from-white to-[#ece9df] shadow-[0_10px_24px_-12px_rgba(0,0,0,0.8)]"
                     : "bg-gradient-to-b from-white to-[#f6f6f2] shadow-[inset_0_1px_0_#fff,0_0_0_1px_rgba(29,20,17,0.06),0_10px_22px_-12px_rgba(29,20,17,0.5)]"
                 }`}
@@ -74,7 +76,7 @@ export default function StoreToggle({
               <span className="flex flex-col leading-tight">
                 <span
                   className={`whitespace-nowrap font-semibold transition-colors duration-200 ${lg ? "text-[1rem]" : "text-sm"} ${
-                    on ? "text-ink" : dark ? "text-white/80" : "text-ink-soft"
+                    on ? (!lg && !dark ? "text-white" : "text-ink") : dark ? "text-white/80" : "text-ink-soft"
                   }`}
                 >
                   {lg ? s.name : sid === "amstel" ? "Amstel" : "Elkton"}

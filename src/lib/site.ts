@@ -13,10 +13,10 @@ export const FOUNDED = 1871;
 /**
  * Public address of the site, used for canonical URLs, Open Graph, the sitemap
  * and structured data. Set NEXT_PUBLIC_SITE_URL in .env.local to override.
- * TODO(owner): confirm the new site will live at bingsbakeandbrew.com (the
- * domain the current site uses) before launch.
+ * TODO(owner): change this to the real domain (for example
+ * https://bingsbakeandbrew.com) when it is pointed at this site.
  */
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://bingsbakeandbrew.com").replace(/\/$/, "");
+export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://bings-bake-and-brew.vercel.app").replace(/\/$/, "");
 
 /** Bing's Bake & Brew's Facebook page, as linked from the previous site. */
 export const SOCIAL = ["https://www.facebook.com/bingsbakeandbrew/"];
@@ -48,12 +48,39 @@ export type Store = {
   /** One plain line about the shop. Facts only. */
   blurb: string;
   /**
-   * STAND-IN photos (Unsplash), not the real shop. Replace `src` with a file
-   * in /public (for example "/shops/amstel.jpg") when real photos exist.
+   * STAND-IN photo (Unsplash), not the real shop. To replace it, save the real
+   * photo over the same file in public/photos (keep the name). 4:3 works best.
    */
   photo: { src: string; alt: string };
-  photoAlt2: { src: string; alt: string };
+  /** The looping hero video shown while this shop is selected. Swap the clip here. */
+  video: HeroVideo;
+  /** The still image layered in front of and behind the hero video. Swap it here. */
+  layers: HeroLayers;
 };
+
+/**
+ * Hero depth image. `blend: "multiply"` drops the cream background (for dark
+ * subjects like beans). `"match"` keeps normal blending and sets the hero
+ * background to `bg`, the image's own backdrop (for white subjects like flour,
+ * which multiply would erase).
+ */
+export type HeroLayers = { src: string; blend: "multiply" | "match"; bg: string };
+
+export const HERO_LAYER_IMAGES = {
+  beans: { src: "/story/beans.webp", blend: "multiply", bg: "#f8efde" },
+  flour: { src: "/story/flour.webp", blend: "match", bg: "#f9eddd" },
+} satisfies Record<string, HeroLayers>;
+
+/**
+ * A hero clip, built by scripts/build-hero-videos.sh from source-media/story.
+ * `bg` is the clip's corner colour, used behind the video so it melts into the page.
+ */
+export type HeroVideo = { mp4: string; webm: string; poster: string; bg: string; label: string };
+
+export const HERO_VIDEOS = {
+  brew: { mp4: "/story/brew.mp4", webm: "/story/brew.webm", poster: "/story/brew-poster.webp", bg: "#f0e6d2", label: "Espresso pouring into a white cup" },
+  bake: { mp4: "/story/bake.mp4", webm: "/story/bake.webm", poster: "/story/bake-poster.webp", bg: "#f4f2e5", label: "A croissant splitting open, flakes flying" },
+} satisfies Record<string, HeroVideo>;
 
 const h = (hh: number, mm = 0) => hh * 60 + mm;
 const monSat = (open: number, close: number): DayHours[] => [
@@ -65,9 +92,6 @@ const monSat = (open: number, close: number): DayHours[] => [
   { open, close },
   { open, close },
 ];
-
-const unsplash = (id: string, w = 1400, hgt = 1750) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${hgt}&q=72`;
 
 export const STORES: Record<StoreId, Store> = {
   amstel: {
@@ -83,14 +107,9 @@ export const STORES: Record<StoreId, Store> = {
     hours: monSat(h(7, 30), h(15)),
     toastUrl: "https://www.toasttab.com/bingsbakeandbrew",
     blurb: "On South Main by the University of Delaware. Bagels as well as the bakery case.",
-    photo: {
-      src: unsplash("1509042239860-f550ce710b93"),
-      alt: "Lattes with poured hearts on a cafe table",
-    },
-    photoAlt2: {
-      src: unsplash("1495474472287-4d71bcdd2085", 1200, 900),
-      alt: "Three coffees held together over a table",
-    },
+    photo: { src: "/photos/shop-amstel.jpg", alt: "Three cups of coffee held together over a cafe table" },
+    video: HERO_VIDEOS.brew,
+    layers: HERO_LAYER_IMAGES.beans,
   },
   elkton: {
     id: "elkton",
@@ -106,14 +125,9 @@ export const STORES: Record<StoreId, Store> = {
     hours: monSat(h(7, 30), h(16)),
     toastUrl: "https://toast.app/r/bings-bakery-3-124-w-main-street",
     blurb: "Opened in 2025 on West Main, across from Sonny's Deli. Open an hour later.",
-    photo: {
-      src: unsplash("1453614512568-c4024d13c247"),
-      alt: "A bright coffee bar with an espresso machine and shelves",
-    },
-    photoAlt2: {
-      src: unsplash("1554118811-1e0d58224f24", 1200, 900),
-      alt: "Cafe tables and chairs in a sunlit room",
-    },
+    photo: { src: "/photos/shop-elkton.jpg", alt: "Cafe tables and chairs in a sunlit room" },
+    video: HERO_VIDEOS.bake,
+    layers: HERO_LAYER_IMAGES.flour,
   },
 };
 
@@ -125,21 +139,24 @@ export const isStoreId = (v: unknown): v is StoreId => v === "amstel" || v === "
 /** Gift cards are sold through Toast. */
 export const GIFT_CARD_URL = "https://www.toasttab.com/bingsbakeandbrew/giftcards";
 
-/** Other stand-in photos used for atmosphere. Listed in the README. */
+/**
+ * Stand-in photos (from Unsplash) all live in public/photos with plain names:
+ * shop-amstel.jpg, shop-elkton.jpg, visit-bakery-case.jpg and menu-<item>.jpg.
+ * Save a real photo over a file, same name, and it replaces the stand-in.
+ */
 export const STAND_INS = {
-  macarons: {
-    src: unsplash("1569864358642-9d1684040f43", 1200, 900),
-    alt: "French macarons in soft colours",
-  },
-  bakeryCase: {
-    src: unsplash("1517433670267-08bbd4be890f", 1400, 1000),
-    alt: "A bakery counter stacked with bread and pastries",
-  },
-  croissants: {
-    src: unsplash("1555507036-ab1f4038808a", 1200, 900),
-    alt: "Croissants dusted with flour",
-  },
+  bakeryCase: { src: "/photos/visit-bakery-case.jpg", alt: "A bakery counter stacked with bread and pastries" },
 };
+
+/** Footer note saying the photos are stand-ins. Set to false once the real photos are in. */
+export const SHOW_STAND_IN_NOTE = true;
+
+/*
+ * TODO(owner): Blackberry Mocha. The old home page showed it with a "New" badge,
+ * but it is on neither shop's menu (DoorDash, Seamless), so there is no price.
+ * It was taken off the site. Once Carla confirms the price, add it to the menu
+ * data (scripts/build-menu-data.py) rather than to a page.
+ */
 
 export function addressLines(s: Store): [string, string] {
   return [s.suite ? `${s.street}, ${s.suite}` : s.street, `${s.city}, ${s.state} ${s.zip}`];

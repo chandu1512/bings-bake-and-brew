@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { STORE_IDS, STORES, addressLines, directionsUrl, mapEmbedUrl, telHref, type StoreId } from "@/lib/site";
-import { DAY_NAMES, clock, shopTime } from "@/lib/hours";
+import { DAY_NAMES, clock, hoursSummary, shopTime } from "@/lib/hours";
 import { useNow, useStore } from "./providers";
 import OpenBadge from "./OpenBadge";
 import { ArrowRight, ArrowUpRight, Phone, Pin } from "./icons";
@@ -25,7 +25,6 @@ export default function ShopCards({ full = false }: { full?: boolean }) {
       {STORE_IDS.map((id) => {
         const s = STORES[id];
         const [l1, l2] = addressLines(s);
-        const first = s.hours.find(Boolean)!;
         return (
           <article
             key={id}
@@ -36,8 +35,8 @@ export default function ShopCards({ full = false }: { full?: boolean }) {
           >
             <div className="gloss relative aspect-[16/9] overflow-hidden bg-porcelain-deep">
               <Image
-                src={s.photoAlt2.src}
-                alt={s.photoAlt2.alt}
+                src={s.photo.src}
+                alt={s.photo.alt}
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="zoom object-cover"
@@ -71,9 +70,7 @@ export default function ShopCards({ full = false }: { full?: boolean }) {
                   </tbody>
                 </table>
               ) : (
-                <p className="tnum mt-2 text-ink-soft">
-                  Monday to Saturday, {clock(first.open)} to {clock(first.close)}. Closed Sunday.
-                </p>
+                <p className="tnum mt-2 text-ink-soft">{hoursSummary(s)}</p>
               )}
 
               <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">

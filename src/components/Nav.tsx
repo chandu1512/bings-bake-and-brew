@@ -19,22 +19,8 @@ export default function Nav() {
   const [menu, setMenu] = useState(false);
   const reduce = useReducedMotion();
 
-  // Over the dark hero band the bar goes dark and the logo white; past it, porcelain and burgundy.
-  const [past, setPast] = useState(false);
-  useEffect(() => {
-    const check = () => {
-      const hero = document.querySelector<HTMLElement>("[data-hero]");
-      setPast(!hero || hero.getBoundingClientRect().bottom < 72);
-    };
-    check();
-    window.addEventListener("scroll", check, { passive: true });
-    window.addEventListener("resize", check);
-    return () => {
-      window.removeEventListener("scroll", check);
-      window.removeEventListener("resize", check);
-    };
-  }, [pathname]);
-  const dark = pathname === "/" && !past;
+  // The header stays light on every page so the color logo always reads clearly.
+  const dark = false;
 
   useEffect(() => setMenu(false), [pathname]);
   useEffect(() => {
@@ -52,22 +38,14 @@ export default function Nav() {
       </a>
       <header className="fixed inset-x-0 top-0 z-50 px-3 pt-[max(0.75rem,env(safe-area-inset-top))] sm:px-5">
         <div className={`glass ${dark ? "glass-dark" : ""} mx-auto flex h-[60px] max-w-[1240px] items-center gap-3 rounded-full pl-5 pr-2`}>
-          <Link href="/" aria-label="Bing's Bake & Brew, home" className="relative mr-auto block h-[46px] w-[91px] shrink-0 lg:mr-5">
+          <Link href="/" aria-label="Bing's Bake & Brew, home" className="mr-auto block shrink-0 lg:mr-5">
             <Image
-              src="/brand/Bings_Bake_Brew_Logo_Color.png"
-              alt=""
+              src="/brand/logo-color.png"
+              alt="Bing's Bake & Brew"
               width={282}
               height={143}
               priority
-              className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-300 ${dark ? "opacity-0" : "opacity-100"}`}
-            />
-            <Image
-              src="/brand/bings-bake-n-brew-coffee-logo.png"
-              alt=""
-              width={282}
-              height={134}
-              priority
-              className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-300 ${dark ? "opacity-100" : "opacity-0"}`}
+              className="h-[42px] w-auto"
             />
           </Link>
 
@@ -96,7 +74,7 @@ export default function Nav() {
             })}
           </nav>
 
-          <OpenBadge store={store} tone={dark ? "dark" : "light"} className="hidden text-sm xl:inline-flex" />
+          <OpenBadge store={store} tone={dark ? "dark" : "light"} showHours className="hidden text-sm xl:inline-flex" />
           <StoreToggle id="nav" size="sm" tone={dark ? "dark" : "light"} className="hidden md:grid" />
 
           <button
@@ -179,7 +157,7 @@ export default function Nav() {
             </nav>
             <div className="mt-auto space-y-4">
               <StoreToggle id="sheet" tone="dark" />
-              <OpenBadge store={store} tone="dark" />
+              <OpenBadge store={store} tone="dark" showHours />
             </div>
           </motion.div>
         )}

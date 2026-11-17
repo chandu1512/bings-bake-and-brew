@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { menuFor, money, type CategoryId, type MenuCategory, type MenuItem } from "@/lib/menu";
 import { useBag, useMenuPhoto, useStore } from "./providers";
+import { STORES, type StoreId } from "@/lib/site";
 import StoreToggle from "./StoreToggle";
 import OpenBadge from "./OpenBadge";
 import { Stepper } from "./BagDrawer";
@@ -119,8 +120,19 @@ function Grid({ items }: { items: MenuItem[] }) {
  * One shop's menu with photos, prices and add-to-bag.
  * `tabs` shows one category at a time. `all` lists every category in full.
  */
-export default function MenuBoard({ mode = "tabs", heading = "h2" }: { mode?: "tabs" | "all"; heading?: "h1" | "h2" }) {
-  const { id, store } = useStore();
+export default function MenuBoard({
+  mode = "tabs",
+  heading = "h2",
+  storeId,
+}: {
+  mode?: "tabs" | "all";
+  heading?: "h1" | "h2";
+  /** Lock the board to one shop (the /menu/<shop> pages). Without it, it follows the selected shop. */
+  storeId?: StoreId;
+}) {
+  const selected = useStore();
+  const id = storeId ?? selected.id;
+  const store = STORES[id];
   const reduce = useReducedMotion();
   const cats = useMemo<MenuCategory[]>(() => menuFor(id), [id]);
   const [picked, setPicked] = useState<CategoryId>("espresso");

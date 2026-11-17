@@ -59,9 +59,33 @@ export function openStatus(store: Store, now: Date): OpenStatus {
   return { open: false, state: "Closed", detail: "", closingSoon: false };
 }
 
-/** "Mon to Sat, 7:30am to 3pm" style summary built from the hours table. */
+const SHORT = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/**
+ * The open days as a range, read from the hours table: "Mon–Sat" (short) or
+ * "Monday to Saturday". Week runs Monday first. Falls back to a list when the
+ * open days aren't one unbroken run.
+ */
+export function openDays(store: Store, short = true) {
+  const order = [1, 2, 3, 4, 5, 6, 0];
+  const open = order.filter((d) => store.hours[d]);
+  const names = short ? SHORT : DAY_NAMES;
+  if (!open.length) return "";
+  const run = order.indexOf(open[open.length - 1]) - order.indexOf(open[0]) + 1 === open.length;
+  if (open.length === 1) return names[open[0]];
+  return run ? `${names[open[0]]}${short ? "–" : " to "}${names[open[open.length - 1]]}` : open.map((d) => names[d]).join(", ");
+}
+
+/** "Mon–Sat 7:30am–3pm", from the first open day's hours. */
+export function hoursShort(store: Store) {
+  const first = store.hours.find(Boolean);
+  return first ? `${openDays(store)} ${clock(first.open)}–${clock(first.close)}` : "Closed";
+}
+
+/** "Monday to Saturday, 7:30am to 3pm. Closed Sunday." built from the hours table. */
 export function hoursSummary(store: Store) {
   const first = store.hours.find(Boolean);
   if (!first) return "Closed";
-  return `Monday to Saturday, ${clock(first.open)} to ${clock(first.close)}. Closed Sunday.`;
+  const closed = [1, 2, 3, 4, 5, 6, 0].filter((d) => !store.hours[d]).map((d) => DAY_NAMES[d]);
+  return `${openDays(store, false)}, ${clock(first.open)} to ${clock(first.close)}.${closed.length ? ` Closed ${closed.join(", ")}.` : ""}`;
 }

@@ -1,0 +1,108 @@
+# Bing's Bake & Brew: Apache rules for SiteGround.
+# Sections: 1. HTTPS and one host  2. 301 redirects  3. 410 gone
+#           4. Error pages  5. Clean page URLs  6. MIME types  7. Caching
+#
+# mod_alias (Redirect / RedirectMatch) rules are checked top to bottom and the
+# first match wins, so every 301 sits above every 410. All patterns are anchored
+# (^...$ or ^.../) so a 410 can never catch one of the redirected paths.
+
+Options -Indexes
+DirectoryIndex index.html
+
+# ---------- 1. HTTPS and one host ----------
+# TODO(owner): confirm www or non-www. This sends everything to https://<host>
+# WITHOUT "www." (so www.example.com -> https://example.com). To prefer www
+# instead, swap the last condition and rule for the two commented lines.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} off [OR]
+  RewriteCond %{HTTP_HOST} ^www\. [NC]
+  RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+  RewriteRule ^ https://%1%{REQUEST_URI} [R=301,L,NE]
+  # RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+  # RewriteRule ^ https://www.%1%{REQUEST_URI} [R=301,L,NE]
+</IfModule>
+
+# ---------- 2. 301 redirects from the old WordPress site ----------
+# Exact paths, with or without a trailing slash.
+RedirectMatch 301 ^/fresh-brewed/?$ /menu/
+RedirectMatch 301 ^/handmade-desserts-amstel/?$ /menu/amstel/
+RedirectMatch 301 ^/handmade-desserts-main/?$ /menu/
+RedirectMatch 301 ^/espresso/?$ /menu/
+RedirectMatch 301 ^/what-we-offer/?$ /menu/
+RedirectMatch 301 ^/locations/?$ /visit/
+RedirectMatch 301 ^/contact-us/?$ /visit/
+RedirectMatch 301 ^/about-us/?$ /
+RedirectMatch 301 ^/about-me/?$ /
+RedirectMatch 301 ^/home-1/?$ /
+RedirectMatch 301 ^/wp-sitemap\.xml$ /sitemap.xml
+
+# ---------- 3. 410 Gone: old WordPress theme demo content ----------
+RedirectMatch 410 ^/elements/
+RedirectMatch 410 ^/blog/
+RedirectMatch 410 ^/portfolio-item/
+RedirectMatch 410 ^/portfolio-(standard|gallery|masonry)/
+RedirectMatch 410 ^/product/
+RedirectMatch 410 ^/product-list/
+RedirectMatch 410 ^/my-acount/
+RedirectMatch 410 ^/(two|three|four|five)-columns
+# Old dated blog posts, e.g. /2019/05/some-post/
+RedirectMatch 410 ^/20[0-9]{2}/
+# wp-sitemap-posts-post-1.xml and friends (the plain /wp-sitemap.xml is redirected above)
+RedirectMatch 410 ^/wp-sitemap-
+RedirectMatch 410 ^/wp-admin
+RedirectMatch 410 ^/wp-login\.php
+RedirectMatch 410 ^/wp-content/
+RedirectMatch 410 ^/feed/
+RedirectMatch 410 ^/(category|tag|portfolio-category|portfolio-tag|testimonials-category|restaurant-menu-category|product_cat|product_tag|author)/
+
+# ---------- 4. Error pages ----------
+ErrorDocument 404 /404.html
+ErrorDocument 410 /404.html
+
+# ---------- 5. Clean page URLs for an exported site ----------
+# /menu/amstel and /menu/amstel/ are served from menu/amstel.html.
+# DirectorySlash Off stops Apache bouncing /menu to /menu/ just because a
+# menu/ folder exists next to menu.html.
+DirectorySlash Off
+<IfModule mod_rewrite.c>
+  # Switched on here too, so these rules never depend on section 1 being present.
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+  RewriteRule ^(.+?)/?$ /$1.html [L]
+</IfModule>
+
+# ---------- 6. MIME types ----------
+<IfModule mod_mime.c>
+  AddType video/webm .webm
+  AddType video/quicktime .mov
+  AddType image/webp .webp
+  AddType video/mp4 .mp4
+</IfModule>
+
+# ---------- 7. Caching ----------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 hour"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType image/webp "access plus 30 days"
+  ExpiresByType image/png "access plus 30 days"
+  ExpiresByType image/jpeg "access plus 30 days"
+  ExpiresByType video/webm "access plus 30 days"
+  ExpiresByType video/quicktime "access plus 30 days"
+  ExpiresByType video/mp4 "access plus 30 days"
+</IfModule>
+<IfModule mod_headers.c>
+  # Pages: always check for a new version.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  # Next.js build files have a content hash in their names, so they never change.
+  <If "%{REQUEST_URI} =~ m#^/_next/static/#">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </If>
+  <FilesMatch "\.(woff2?)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+</IfModule>

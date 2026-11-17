@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { GIFT_CARD_URL, NAV, SHOP_NAME, STORE_IDS, STORES, addressLines, directionsUrl, telHref } from "@/lib/site";
+import { GIFT_CARD_URL, NAV, SHOP_NAME, SHOW_STAND_IN_NOTE, STORE_IDS, STORES, addressLines, directionsUrl, telHref } from "@/lib/site";
 import { hoursSummary } from "@/lib/hours";
 
 export default function Footer() {
@@ -72,7 +72,7 @@ export default function Footer() {
         <p>
           &copy; {new Date().getFullYear()} {SHOP_NAME}. Gift cards run on Toast.
         </p>
-        <p>Photographs are stand-ins from Unsplash until the shops&rsquo; own are added.</p>
+        {SHOW_STAND_IN_NOTE && <p>Some photographs are stand-ins from Unsplash until the shops&rsquo; own are added.</p>}
       </div>
     </footer>
   );

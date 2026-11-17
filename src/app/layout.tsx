@@ -7,11 +7,10 @@ import BagDrawer from "@/components/BagDrawer";
 import ItemSheet from "@/components/ItemSheet";
 import { Providers } from "@/components/providers";
 import { SHOP_NAME, SITE_URL } from "@/lib/site";
-import { TOWNS, localBusinessJsonLd } from "@/lib/seo";
+import { OG_IMAGE, TOWNS, localBusinessJsonLd } from "@/lib/seo";
 import { realMenuPhotos } from "@/lib/photos";
 
 const description = `Coffee, espresso and Bing's Bakery pastries, baked since 1871, at two shops in ${TOWNS}. See each shop's menu, prices and hours, and order pickup online.`;
-const ogImage = { url: "/photos/elkton/baked-goods--crumb-cake.jpg", width: 1200, height: 900, alt: `Crumb cake from ${SHOP_NAME}` };
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -27,13 +26,13 @@ export const metadata: Metadata = {
     title: `${SHOP_NAME} | Coffee Shop and Bakery in ${TOWNS}`,
     description,
     url: "/",
-    images: [ogImage],
+    images: [OG_IMAGE],
   },
   twitter: {
     card: "summary_large_image",
     title: `${SHOP_NAME} | Coffee Shop and Bakery in ${TOWNS}`,
     description,
-    images: [ogImage.url],
+    images: [OG_IMAGE.url],
   },
 };
 
@@ -46,15 +45,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        {/* Before first paint: mark the visitor's shop (link first, then remembered) so the hero shows the right still. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var s=new URLSearchParams(location.search).get("store")||localStorage.getItem("bings.store");if(s==="amstel"||s==="elkton")document.documentElement.dataset.store=s}catch(e){}`,
-          }}
-        />
-      </head>
+    <html lang="en">
       <body className="relative min-h-screen antialiased">
         <script
           type="application/ld+json"

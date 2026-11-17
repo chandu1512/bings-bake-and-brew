@@ -3,15 +3,17 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   devIndicators: false,
-  images: {
-    // Stand-in photography until the shop's own photos are added.
-    remotePatterns: [
-      { protocol: "https", hostname: "images.unsplash.com" },
-      { protocol: "https", hostname: "images.pexels.com" },
-    ],
-  },
   async redirects() {
-    return [{ source: "/location", destination: "/visit", permanent: true }];
+    return [
+      { source: "/location", destination: "/visit", permanent: true },
+      // Old links like /menu?store=elkton open that shop's own menu page.
+      {
+        source: "/menu",
+        has: [{ type: "query", key: "store", value: "(?<store>amstel|elkton)" }],
+        destination: "/menu/:store",
+        permanent: false,
+      },
+    ];
   },
 };
 

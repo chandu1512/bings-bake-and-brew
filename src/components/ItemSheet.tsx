@@ -320,7 +320,7 @@ export default function ItemSheet() {
                   <BuilderCup look={look!} filmic={env.desktop} />
                 ) : (
                   <div className="gloss absolute inset-3 overflow-hidden rounded-[20px] shadow-[0_24px_50px_-20px_rgba(0,0,0,0.9)] lg:inset-x-8 lg:inset-y-2 lg:rounded-[24px]">
-                    <Image src={photo(item.id, 900, 900)} alt="" fill sizes="(min-width: 1024px) 440px, 50vw" className="object-cover" />
+                    <Image src={photo(item.id)} alt={item.name} fill sizes="(min-width: 1024px) 440px, 50vw" className="object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-espresso/55 via-transparent to-gold/10" />
                   </div>
                 )}
@@ -339,7 +339,7 @@ export default function ItemSheet() {
             </div>
 
             <div className="flex min-h-0 flex-1 flex-col">
-              <div data-lenis-prevent className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pt-2 lg:px-8 lg:pt-16">
+              <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 pt-2 lg:px-8 lg:pt-16">
                 {(item.groups ?? []).map((g) => (
                   <Group key={g.id} group={g} food={!isDrink} picked={choices[g.id] ?? []} onPick={(ids) => setChoices((c) => ({ ...c, [g.id]: ids }))} />
                 ))}

@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
-import { TOWNS } from "@/lib/seo";
+import { TOWNS, pageMeta } from "@/lib/seo";
 import Image from "next/image";
 import ShopCards from "@/components/ShopCards";
-import { STAND_INS } from "@/lib/site";
+import { STAND_INS, STORE_IDS, STORES } from "@/lib/site";
+import { hoursSummary } from "@/lib/hours";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: `Hours and Directions | ${TOWNS}`,
   description: `Hours, addresses, phone numbers and Google Maps directions for Bing's Bake & Brew in ${TOWNS}.`,
-  alternates: { canonical: "/visit" },
-  openGraph: { title: `Hours and Directions | ${TOWNS}`, description: `Hours, addresses, phone numbers and Google Maps directions for Bing's Bake & Brew in ${TOWNS}.`, url: "/visit" },
-  twitter: { title: `Hours and Directions | ${TOWNS}`, description: `Hours, addresses, phone numbers and Google Maps directions for Bing's Bake & Brew in ${TOWNS}.` },
-};
+  path: "/visit",
+});
 
 export default function VisitPage() {
   return (
@@ -18,10 +17,13 @@ export default function VisitPage() {
       <section className="shell pb-20 pt-[120px] md:pt-[150px] lg:pb-28">
         <div className="mb-12 grid gap-6 lg:grid-cols-12 lg:items-end">
           <h1 className="display-xl lg:col-span-7">Find us on Main Street. Either one.</h1>
-          <p className="lede lg:col-span-5">
-            Both shops open at 7:30 in the morning, Monday to Saturday. Amstel Square closes at 3, Elkton at 4. Closed
-            Sundays.
-          </p>
+          <ul className="lede space-y-1 lg:col-span-5">
+            {STORE_IDS.map((id) => (
+              <li key={id}>
+                <strong className="font-semibold text-ink">{STORES[id].name}:</strong> {hoursSummary(STORES[id])}
+              </li>
+            ))}
+          </ul>
         </div>
         <ShopCards full />
       </section>

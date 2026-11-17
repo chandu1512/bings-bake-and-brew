@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
-import { TOWNS } from "@/lib/seo";
+import { TOWNS, pageMeta } from "@/lib/seo";
 import MenuBoard from "@/components/MenuBoard";
 import OrderIntro from "@/components/OrderIntro";
 
-export const metadata: Metadata = {
-  title: `Order Online for Pickup in ${TOWNS}`,
+export const metadata: Metadata = pageMeta({
+  title: "Order Online for Pickup",
   description: `Order coffee and Bing's Bakery pastries online, pay ahead, and pick up at our shop in ${TOWNS}.`,
-  alternates: { canonical: "/order" },
-  openGraph: { title: `Order Online for Pickup in ${TOWNS}`, description: `Order coffee and Bing's Bakery pastries online, pay ahead, and pick up at our shop in ${TOWNS}.`, url: "/order" },
-  twitter: { title: `Order Online for Pickup in ${TOWNS}`, description: `Order coffee and Bing's Bakery pastries online, pay ahead, and pick up at our shop in ${TOWNS}.` },
-};
+  path: "/order",
+});
 
 export default function OrderPage() {
   return (

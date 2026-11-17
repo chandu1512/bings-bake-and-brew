@@ -35,6 +35,7 @@
     scrollbar-color: #b9a88c var(--porcelain);
   }
 
+  html { scrollbar-gutter: stable; }
   body {
     background-color: var(--porcelain);
     color: var(--ink);
@@ -44,7 +45,8 @@
     caret-color: var(--cherry);
   }
 
-  /* Film grain over everything: a noise tile that jumps a few px, like 35mm stock. */
+  /* Film grain over everything. Still, with normal blending: a moving or blended
+     full-screen layer makes the browser redraw the whole page on every scroll frame. */
   body::after {
     content: "";
     position: fixed;
@@ -53,12 +55,8 @@
     pointer-events: none;
     background-image: var(--grain);
     background-size: 220px 220px;
-    opacity: 0.055;
-    mix-blend-mode: multiply;
-    animation: grain 0.9s steps(1) infinite;
-  }
-  @media (min-width: 1024px) {
-    body::after { opacity: 0.075; mix-blend-mode: overlay; }
+    opacity: 0.05;
+    transform: translateZ(0);
   }
 
   h1, h2 {
@@ -330,7 +328,7 @@
     background-size: 180px 180px;
     opacity: 0.16;
     mix-blend-mode: soft-light;
-    animation: grain 0.7s steps(1) infinite;
+    /* Still grain: animating it repainted whole sections many times a second. */
   }
   .hero-canvas { animation: hero-in 900ms var(--ease-out) both; }
 
@@ -367,17 +365,6 @@
   }
 }
 
-@keyframes grain {
-  0% { background-position: 0 0; }
-  12% { background-position: -34px 21px; }
-  25% { background-position: 27px -48px; }
-  37% { background-position: -51px -17px; }
-  50% { background-position: 44px 39px; }
-  62% { background-position: -12px 58px; }
-  75% { background-position: 59px -8px; }
-  87% { background-position: -40px -55px; }
-}
-
 @keyframes leak {
   0%, 55% { transform: translateX(-110%); opacity: 0; }
   62% { opacity: 1; }
@@ -387,11 +374,6 @@
 @keyframes strip { to { transform: translate3d(-50%, 0, 0); } }
 
 @keyframes hero-in { from { opacity: 0; } to { opacity: 1; } }
-/* Hero copy entrance: pure CSS so it plays on first paint, before any JavaScript arrives. */
-@keyframes hero-rise { from { opacity: 0; transform: translate3d(0, 18px, 0); } to { opacity: 1; transform: none; } }
-html[data-store="elkton"] .hero-poster-amstel,
-html:not([data-store="elkton"]) .hero-poster-elkton { display: none; }
-.hero-rise { animation: hero-rise 0.7s cubic-bezier(0.23, 1, 0.32, 1) both; }
 
 @keyframes ping {
   0% { transform: scale(1); opacity: 0.55; }
@@ -428,11 +410,115 @@ html:not([data-store="elkton"]) .hero-poster-elkton { display: none; }
   to { transform: rotateY(9deg) rotateX(-3deg); }
 }
 
-html.lenis, html.lenis body { height: auto; }
-.lenis.lenis-smooth { scroll-behavior: auto !important; }
-.lenis.lenis-stopped { overflow: clip; }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-rise, .kenburns, .steam span, .dot-live::before, .floaty, .film-strip-track, .light-leak, body::after, .hero-band::after, .grain-dark::after { animation: none; }
+  .kenburns, .steam span, .dot-live::before, .floaty, .film-strip-track, .light-leak, body::after, .hero-band::after, .grain-dark::after { animation: none; }
   .zoom, .btn, .btn svg, .btn::before { transition-duration: 0.01ms !important; }
+}
+
+/* ---------- Hero depth (src/components/HeroDepth.tsx) ---------- */
+/* Back to front: far image, the video, near image. Only transforms move. */
+.depth-set {
+  position: absolute;
+  inset: 0;
+  transition: opacity 600ms ease-out;
+  /* Fade every layer, and the "match" background colour, into the page at the bottom. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+}
+.depth-multiply { mix-blend-mode: multiply; }
+
+/* Keep the middle clear: logo, cup or croissant, headline. */
+.depth-far-wrap,
+.depth-near-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.depth-far-wrap {
+  -webkit-mask-image: radial-gradient(ellipse 36% 52% at 50% 46%, transparent 55%, #000 100%);
+  mask-image: radial-gradient(ellipse 36% 52% at 50% 46%, transparent 55%, #000 100%);
+}
+.depth-near-wrap {
+  -webkit-mask-image: linear-gradient(to right, #000 0%, transparent 15%, transparent 85%, #000 100%);
+  mask-image: linear-gradient(to right, #000 0%, transparent 15%, transparent 85%, #000 100%);
+}
+
+.depth-far,
+.depth-near {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+  transition: transform 0.4s ease-out;
+}
+/* Pointer parallax: --hx/--hy run -1..1, written by HeroDepth inside requestAnimationFrame. */
+.depth-far { transform: translate3d(calc(var(--hx, 0) * -8px), calc(var(--hy, 0) * -8px), 0); }
+.depth-near {
+  transform: translate3d(calc(var(--hx, 0) * 24px), calc(var(--hy, 0) * 24px), 0) scale(1.7);
+  filter: blur(6px);
+  opacity: 0.9;
+}
+.depth-far-phone { display: none; }
+
+/* Touch screens: no pointer, a very slow drift instead, different timing per layer. */
+@media (hover: none), (pointer: coarse) {
+  .depth-far { transition: none; animation: drift-far 12s ease-in-out infinite alternate; }
+  .depth-near { transition: none; animation: drift-near 15s ease-in-out infinite alternate; }
+}
+@keyframes drift-far { from { transform: translate3d(-3px, 2px, 0); } to { transform: translate3d(3px, -2px, 0); } }
+@keyframes drift-near { from { transform: translate3d(4px, -3px, 0) scale(1.7); } to { transform: translate3d(-4px, 3px, 0) scale(1.7); } }
+
+/* Phones: fainter, pieces at the top and bottom edges only, no near layer. */
+@media (max-width: 639px) {
+  .depth-far { display: none; }
+  .depth-far-phone {
+    display: block;
+    position: absolute;
+    inset: 0;
+    opacity: 0.6;
+    background-repeat: no-repeat;
+    background-size: 250% auto, 250% auto;
+    background-position: left top, right bottom;
+    will-change: transform;
+    animation: drift-far 12s ease-in-out infinite alternate;
+  }
+  .depth-far-wrap {
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 24%, transparent 74%, #000 100%);
+    mask-image: linear-gradient(to bottom, #000 0%, transparent 24%, transparent 74%, #000 100%);
+  }
+  .depth-front { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .depth-far, .depth-near, .depth-far-phone { animation: none !important; transition: none !important; }
+  .depth-far { transform: none; }
+  .depth-near { transform: scale(1.7); }
+}
+
+/* ---------- Baker on the history timeline (src/components/ChefWalk.tsx) ---------- */
+.chef-mover { will-change: transform; }
+/* Feet sit on the line: the keyed clip has a little padding under the shoes. */
+.chef-breathe { transform-origin: 50% 100%; animation: chef-breathe 3.2s ease-in-out infinite; }
+@keyframes chef-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.015); } }
+.chef-bubble { animation: bubble-in 420ms cubic-bezier(0.23, 1, 0.32, 1) both; transform-origin: 0% 100%; }
+@keyframes bubble-in { from { opacity: 0; transform: scale(0.9) translate3d(0, 8px, 0); } to { opacity: 1; transform: none; } }
+/* As he reaches a dot: a soft glow pulse, and that year brightens. */
+.timeline-year { transition: color 600ms ease-out, text-shadow 600ms ease-out; }
+[data-passed] .timeline-year { color: #ecd59c; text-shadow: 0 0 28px rgba(236, 213, 156, 0.35); }
+.timeline-dot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(236, 213, 156, 0.75), rgba(236, 213, 156, 0) 70%);
+  opacity: 0;
+  transform: scale(0.6);
+}
+[data-passed] .timeline-dot::after { animation: dot-glow 1.4s ease-out forwards; }
+@keyframes dot-glow { 0% { opacity: 0; transform: scale(0.6); } 30% { opacity: 1; transform: scale(1.6); } 100% { opacity: 0.35; transform: scale(1.2); } }
+@media (prefers-reduced-motion: reduce) {
+  .chef-breathe, .chef-bubble, [data-passed] .timeline-dot::after { animation: none; }
 }

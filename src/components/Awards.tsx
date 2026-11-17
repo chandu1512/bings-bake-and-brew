@@ -44,8 +44,9 @@ const PRESS = [
 export default function Awards() {
   const reduce = useReducedMotion();
   const rise = (i: number) => ({
-    initial: reduce ? { opacity: 0 } : { opacity: 0, y: 28, filter: "blur(6px)" },
-    whileInView: { opacity: 1, y: 0, filter: "blur(0px)" },
+    // Opacity and movement only: animating blur is expensive and can stutter while scrolling.
+    initial: reduce ? { opacity: 0 } : { opacity: 0, y: 28 },
+    whileInView: { opacity: 1, y: 0 },
     viewport: { once: true, margin: "-80px" },
     transition: { duration: 0.7, ease: EASE, delay: i * 0.1 },
   });

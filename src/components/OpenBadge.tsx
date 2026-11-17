@@ -2,7 +2,7 @@
 
 import { AnimatePresence, motion } from "framer-motion";
 import type { Store } from "@/lib/site";
-import { clock, openStatus } from "@/lib/hours";
+import { clock, hoursShort, openStatus } from "@/lib/hours";
 import { useNow } from "./providers";
 
 /**
@@ -14,10 +14,13 @@ export default function OpenBadge({
   store,
   tone = "light",
   className = "",
+  showHours = false,
 }: {
   store: Store;
   tone?: "light" | "dark";
   className?: string;
+  /** When closed, show the shop's hours (e.g. "Mon–Sat 7:30am–3pm") instead of the next opening. */
+  showHours?: boolean;
 }) {
   const now = useNow();
   const status = now ? openStatus(store, now) : null;
@@ -53,12 +56,16 @@ export default function OpenBadge({
                 /
               </span>
               <span className={dark ? "text-white/70" : "text-ink-soft"}>
-                {status.closingSoon ? `closing soon, ${clock(first!.close)}` : status.detail}
+                {status.closingSoon
+                  ? `closing soon, ${clock(first!.close)}`
+                  : showHours && !status.open && first
+                    ? hoursShort(store)
+                    : status.detail}
               </span>
             </>
           ) : (
             <span className={dark ? "text-white/70" : "text-ink-soft"}>
-              Mon to Sat, {first ? `${clock(first.open)} to ${clock(first.close)}` : ""}
+              {hoursShort(store)}
             </span>
           )}
         </motion.span>

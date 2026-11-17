@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { DEFAULT_STORE, STORES, isStoreId, type Store, type StoreId } from "@/lib/site";
 import { itemById } from "@/lib/menu";
 import { defaultChoices, priceLine } from "@/lib/pricing";
@@ -9,13 +9,29 @@ import { menuPhoto } from "@/lib/menu-photos";
 
 /* ----------------------------- which shop ----------------------------- */
 
-type StoreCtx = { id: StoreId; store: Store; setStore: (id: StoreId) => void };
+type StoreCtx = {
+  id: StoreId;
+  store: Store;
+  setStore: (id: StoreId) => void;
+  /** True once the visitor has picked a shop (now or on an earlier visit), not just the default. */
+  chosen: boolean;
+  /** True after the first-load choice (link, page, remembered shop) has been applied. */
+  ready: boolean;
+};
 const StoreContext = createContext<StoreCtx | null>(null);
 
 const STORE_KEY = "bings.store";
 const BAG_KEY = "bings.bags.v2";
 
+/** The shop named by a store page's address, e.g. /menu/elkton. */
+export function storeFromPath(pathname: string | null): StoreId | null {
+  const m = pathname?.match(/^\/menu\/(amstel|elkton)(\/|$)/);
+  return m ? (m[1] as StoreId) : null;
+}
+
 function writeUrl(id: StoreId) {
+  // Store pages carry the shop in the path; no ?store= needed there.
+  if (storeFromPath(window.location.pathname)) return;
   const url = new URL(window.location.href);
   if (url.searchParams.get("store") === id) return;
   url.searchParams.set("store", id);
@@ -76,18 +92,22 @@ export function Providers({ children, localPhotos }: { children: React.ReactNode
   const [ready, setReady] = useState(false);
   const photoSet = useMemo(() => new Set(localPhotos), [localPhotos]);
   const pathname = usePathname();
+  const router = useRouter();
+  const [chosen, setChosen] = useState(false);
 
-  // First load: the link wins, then the remembered shop, then the default.
+  // First load: a store page's address wins, then ?store=, then the remembered shop, then the default.
   useEffect(() => {
+    const fromPath = storeFromPath(window.location.pathname);
     const fromUrl = new URLSearchParams(window.location.search).get("store");
     let chosen: StoreId = DEFAULT_STORE;
-    if (isStoreId(fromUrl)) chosen = fromUrl;
-    else {
-      try {
-        const saved = window.localStorage.getItem(STORE_KEY);
-        if (isStoreId(saved)) chosen = saved;
-      } catch {}
-    }
+    let picked = false;
+    try {
+      const saved = window.localStorage.getItem(STORE_KEY);
+      if (isStoreId(saved)) [chosen, picked] = [saved, true];
+    } catch {}
+    if (isStoreId(fromUrl)) [chosen, picked] = [fromUrl, true];
+    if (fromPath) [chosen, picked] = [fromPath, true];
+    setChosen(picked);
     try {
       const raw = window.localStorage.getItem(BAG_KEY);
       if (raw) {
@@ -106,11 +126,6 @@ export function Providers({ children, localPhotos }: { children: React.ReactNode
     if (ready) writeUrl(id);
   }, [pathname, id, ready]);
 
-  // html[data-store] picks the hero still in CSS (see the head script in layout.tsx).
-  useEffect(() => {
-    if (ready) document.documentElement.dataset.store = id;
-  }, [id, ready]);
-
   useEffect(() => {
     if (!ready) return;
     try {
@@ -118,12 +133,31 @@ export function Providers({ children, localPhotos }: { children: React.ReactNode
     } catch {}
   }, [bags, ready]);
 
-  const setStore = useCallback((next: StoreId) => {
-    setId(next);
-    try {
-      window.localStorage.setItem(STORE_KEY, next);
-    } catch {}
-  }, []);
+  // Moving to another store page (link, back button) makes that shop the selected one.
+  useEffect(() => {
+    const fromPath = storeFromPath(pathname);
+    if (ready && fromPath) {
+      setId(fromPath);
+      setChosen(true);
+      try {
+        window.localStorage.setItem(STORE_KEY, fromPath);
+      } catch {}
+    }
+  }, [pathname, ready]);
+
+  const setStore = useCallback(
+    (next: StoreId) => {
+      setId(next);
+      setChosen(true);
+      try {
+        window.localStorage.setItem(STORE_KEY, next);
+      } catch {}
+      // On a store's menu page, switching shop opens the other shop's menu.
+      const onStorePage = storeFromPath(window.location.pathname);
+      if (onStorePage && onStorePage !== next) router.push(`/menu/${next}`);
+    },
+    [router],
+  );
 
   const edit = useCallback(
     (fn: (lines: BagLine[]) => BagLine[]) => setBags((b) => ({ ...b, [id]: fn(b[id]) })),
@@ -190,7 +224,7 @@ export function Providers({ children, localPhotos }: { children: React.ReactNode
     };
   }, [bags, id, isOpen, customizing, customize, editingKey, edit]);
 
-  const storeValue = useMemo(() => ({ id, store: STORES[id], setStore }), [id, setStore]);
+  const storeValue = useMemo(() => ({ id, store: STORES[id], setStore, chosen, ready }), [id, setStore, chosen, ready]);
 
   return (
     <StoreContext.Provider value={storeValue}>
@@ -227,5 +261,5 @@ export function useNow() {
 /** Photo URL for a menu item: the owner's local file if there is one, else the stand-in. */
 export function useMenuPhoto() {
   const local = useContext(PhotoContext);
-  return useCallback((id: string, w?: number, h?: number) => menuPhoto(id, local.has(id), w, h), [local]);
+  return useCallback((id: string) => menuPhoto(id, local.has(id)), [local]);
 }

@@ -2,6 +2,7 @@
  * Local SEO: schema.org structured data built only from src/lib/site.ts.
  * One CafeOrCoffeeShop per shop, both part of the Bing's Bake & Brew brand.
  */
+import type { Metadata } from "next";
 import { SHOP_NAME, SITE_URL, SOCIAL, STORE_IDS, STORES, directionsUrl, type Store } from "./site";
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -43,7 +44,7 @@ function shopNode(store: Store) {
     openingHoursSpecification: openingHours(store),
     servesCuisine: ["Coffee", "Bakery"],
     priceRange: "$",
-    menu: `${SITE_URL}/menu?store=${store.id}`,
+    menu: `${SITE_URL}/menu/${store.id}`,
     acceptsReservations: false,
     hasMap: directionsUrl(store),
     parentOrganization: { "@id": `${SITE_URL}/#brand` },
@@ -70,3 +71,23 @@ export function localBusinessJsonLd() {
 
 /** "Newark, DE and Elkton, MD", built from the shop list. */
 export const TOWNS = STORE_IDS.map((id) => STORES[id].town).join(" and ");
+
+/** The image shown when a page is shared (Open Graph and Twitter). */
+export const OG_IMAGE = { url: "/photos/elkton/baked-goods--crumb-cake.jpg", width: 1200, height: 900, alt: `Crumb cake from ${SHOP_NAME}` };
+
+/**
+ * Title, description, canonical URL, Open Graph and Twitter card for one page.
+ * A page's openGraph replaces the site-wide one entirely in Next.js, so every
+ * page goes through here to keep the share image and large card.
+ * `absolute` skips the " | Bing's Bake & Brew" suffix for titles that already name the shop.
+ */
+export function pageMeta({ title, description, path, absolute = false }: { title: string; description: string; path: string; absolute?: boolean }): Metadata {
+  const full = absolute ? title : `${title} | ${SHOP_NAME}`;
+  return {
+    title: absolute ? { absolute: title } : title,
+    description,
+    alternates: { canonical: path },
+    openGraph: { type: "website", siteName: SHOP_NAME, locale: "en_US", title: full, description, url: path, images: [OG_IMAGE] },
+    twitter: { card: "summary_large_image", title: full, description, images: [OG_IMAGE.url] },
+  };
+}

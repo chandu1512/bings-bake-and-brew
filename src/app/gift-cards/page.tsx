@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { pageMeta } from "@/lib/seo";
 import GiftCard from "@/components/GiftCard";
 import { ArrowUpRight, Lock } from "@/components/icons";
 import { GIFT_CARD_URL, STORES } from "@/lib/site";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
   title: "Gift Cards",
-  description: "Buy a Bing's Bake & Brew gift card online through Toast.",
-  alternates: { canonical: "/gift-cards" },
-  openGraph: { title: "Gift Cards", description: "Buy a Bing's Bake & Brew gift card online, good at both shops.", url: "/gift-cards" },
-  twitter: { title: "Gift Cards", description: "Buy a Bing's Bake & Brew gift card online, good at both shops." },
-};
+  description: "Buy a Bing's Bake & Brew gift card online through Toast, good at both shops.",
+  path: "/gift-cards",
+});
 
 export default function GiftCardsPage() {
   return (
@@ -38,8 +37,8 @@ export default function GiftCardsPage() {
         <div className="shell grid gap-12 py-20 lg:grid-cols-2 lg:items-center lg:py-28">
           <div className="zoom-frame gloss relative aspect-[4/3] overflow-hidden rounded-[28px]">
             <Image
-              src={STORES.amstel.photoAlt2.src}
-              alt={STORES.amstel.photoAlt2.alt}
+              src={STORES.amstel.photo.src}
+              alt={STORES.amstel.photo.alt}
               fill
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="zoom object-cover"

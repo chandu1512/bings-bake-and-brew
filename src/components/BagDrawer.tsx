@@ -123,7 +123,7 @@ export default function BagDrawer() {
               </button>
             </header>
 
-            <div data-lenis-prevent className="flex-1 overflow-y-auto overscroll-contain px-6">
+            <div className="flex-1 overflow-y-auto overscroll-contain px-6">
               {lines.length === 0 ? (
                 <div className="grid h-full place-items-center pb-10 text-center">
                   <div>
@@ -160,7 +160,7 @@ export default function BagDrawer() {
                           className="flex gap-4 py-4"
                         >
                           <div className="relative h-[68px] w-[68px] shrink-0 overflow-hidden rounded-2xl bg-porcelain-deep">
-                            <Image src={photo(item.id, 300, 300)} alt="" fill sizes="68px" className="object-cover" />
+                            <Image src={photo(item.id)} alt={item.name} fill sizes="68px" className="object-cover" />
                           </div>
                           <div className="min-w-0 flex-1">
                             <div className="flex items-start justify-between gap-3">
