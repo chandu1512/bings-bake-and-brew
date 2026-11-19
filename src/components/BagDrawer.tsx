@@ -3,7 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { itemById, money } from "@/lib/menu";
 import { priceLine } from "@/lib/pricing";
 import { useBag, useMenuPhoto, useStore } from "./providers";

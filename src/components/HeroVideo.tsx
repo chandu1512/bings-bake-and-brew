@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { STORE_IDS, STORES, type StoreId } from "@/lib/site";
 import { useStore } from "./providers";
+import { isWebKit, prepareInlineVideo } from "@/lib/media-support";
 
 /** Soft radial feather so the clip's rectangle edge never shows. */
 // Radii of 50% put full transparency exactly at the box edges, so no side or corner can show.
@@ -27,6 +28,10 @@ export default function HeroVideo({ className = "" }: { className?: string }) {
   const [wanted, setWanted] = useState<StoreId[]>([]);
   const [playing, setPlaying] = useState<Partial<Record<StoreId, boolean>>>({});
   const [onScreen, setOnScreen] = useState(true);
+  // Shops whose autoplay the browser refused (e.g. iOS Low Power Mode): poster only, never a play button.
+  const [blocked, setBlocked] = useState<StoreId[]>([]);
+  const [webkit, setWebkit] = useState(false);
+  useEffect(() => setWebkit(isWebKit()), []);
 
   // Load a shop's video only once it has been selected (after the remembered shop is known).
   useEffect(() => {
@@ -46,8 +51,10 @@ export default function HeroVideo({ className = "" }: { className?: string }) {
     for (const sid of STORE_IDS) {
       const v = videos.current[sid];
       if (!v) continue;
-      if (sid === id && onScreen) v.play().catch(() => {});
-      else v.pause();
+      if (sid === id && onScreen) {
+        prepareInlineVideo(v);
+        v.play().catch(() => setBlocked((b) => (b.includes(sid) ? b : [...b, sid])));
+      } else v.pause();
     }
   }, [id, onScreen, wanted]);
 
@@ -74,15 +81,12 @@ export default function HeroVideo({ className = "" }: { className?: string }) {
               className="absolute inset-0 h-full w-full object-cover"
               style={{ WebkitMaskImage: FEATHER, maskImage: FEATHER }}
             />
-            {wanted.includes(sid) && (
+            {wanted.includes(sid) && !blocked.includes(sid) && (
               <video
                 ref={(el) => {
                   videos.current[sid] = el;
-                  if (el) {
-                    // Set as properties too: some mobile browsers only honour muted autoplay this way.
-                    el.muted = true;
-                    el.defaultMuted = true;
-                  }
+                  // Muted + inline set on the element itself: React doesn't reliably render `muted`, and iOS decides on it.
+                  if (el) prepareInlineVideo(el);
                 }}
                 autoPlay={on}
                 muted
@@ -95,10 +99,12 @@ export default function HeroVideo({ className = "" }: { className?: string }) {
                 aria-hidden
                 poster={clip.poster}
                 onPlaying={() => setPlaying((p) => ({ ...p, [sid]: true }))}
-                className="absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
+                className="hero-video absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
                 style={{ WebkitMaskImage: FEATHER, maskImage: FEATHER, opacity: playing[sid] ? 1 : 0 }}
               >
-                <source src={clip.webm} type="video/webm" />
+                {/* WebKit (Safari, every iOS browser): H.264 only, hardware-decoded and allowed to autoplay.
+                    Others: the smaller VP9 WebM first. */}
+                {!webkit && <source src={clip.webm} type='video/webm; codecs="vp9"' />}
                 <source src={clip.mp4} type="video/mp4" />
               </video>
             )}

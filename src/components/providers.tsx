@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { MotionConfig } from "framer-motion";
 import { DEFAULT_STORE, STORES, isStoreId, type Store, type StoreId } from "@/lib/site";
 import { itemById } from "@/lib/menu";
 import { defaultChoices, priceLine } from "@/lib/pricing";
@@ -229,7 +230,10 @@ export function Providers({ children, localPhotos }: { children: React.ReactNode
   return (
     <StoreContext.Provider value={storeValue}>
       <BagContext.Provider value={bag}>
-        <PhotoContext.Provider value={photoSet}>{children}</PhotoContext.Provider>
+        <PhotoContext.Provider value={photoSet}>
+          {/* Reduce Motion users get no movement from the first frame (see src/lib/use-reduced-motion.ts). */}
+          <MotionConfig reducedMotion="user">{children}</MotionConfig>
+        </PhotoContext.Provider>
       </BagContext.Provider>
     </StoreContext.Provider>
   );

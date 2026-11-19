@@ -64,11 +64,17 @@ export type Store = {
  * background to `bg`, the image's own backdrop (for white subjects like flour,
  * which multiply would erase).
  */
-export type HeroLayers = { src: string; blend: "multiply" | "match"; bg: string };
+export type HeroLayers = {
+  src: string;
+  /** The near (front) layer: pre-blurred, and for "multiply" images already keyed to transparency, so the browser does no live blur or blending. */
+  near: string;
+  blend: "multiply" | "match";
+  bg: string;
+};
 
 export const HERO_LAYER_IMAGES = {
-  beans: { src: "/story/beans.webp", blend: "multiply", bg: "#f8efde" },
-  flour: { src: "/story/flour.webp", blend: "match", bg: "#f9eddd" },
+  beans: { src: "/story/beans.webp", near: "/story/beans-near.webp", blend: "multiply", bg: "#f8efde" },
+  flour: { src: "/story/flour.webp", near: "/story/flour-near.webp", blend: "match", bg: "#f9eddd" },
 } satisfies Record<string, HeroLayers>;
 
 /**

@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { STORE_IDS, STORES } from "@/lib/site";
 import { openStatus } from "@/lib/hours";
 import { useNow, useStore } from "./providers";
@@ -16,7 +17,8 @@ export default function StoreToggle({
   className = "",
 }: {
   id: string;
-  size?: "sm" | "lg";
+  /** "md": compact like sm, but 44px tall for thumbs (the phone header row). */
+  size?: "sm" | "md" | "lg";
   tone?: "light" | "dark";
   className?: string;
 }) {
@@ -48,7 +50,7 @@ export default function StoreToggle({
             aria-checked={on}
             onClick={() => setStore(sid)}
             className={`relative rounded-full text-left transition-transform duration-150 ease-out active:scale-[0.97] ${
-              lg ? "min-h-[60px] px-4 py-2.5 sm:px-6" : "min-h-[40px] px-4 py-1.5"
+              lg ? "min-h-[60px] px-4 py-2.5 sm:px-6" : size === "md" ? "min-h-[44px] px-4 py-2" : "min-h-[40px] px-4 py-1.5"
             }`}
           >
             {on && (

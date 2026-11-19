@@ -14,6 +14,9 @@ const description = `Coffee, espresso and Bing's Bakery pastries, baked since 18
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  // iPhone Safari otherwise turns phone numbers and addresses into links by rewriting
+  // the HTML before React loads, which causes hydration errors. Phones here are already links.
+  formatDetection: { telephone: false, address: false, email: false, date: false },
   title: {
     default: `${SHOP_NAME} | Coffee Shop and Bakery in ${TOWNS}`,
     template: `%s | ${SHOP_NAME}`,
@@ -44,8 +47,10 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // suppressHydrationWarning on <html> only: Chrome on iOS adds a __gcrremoteframetoken
+  // attribute to it before React loads. It is harmless and applies to this one element, not its children.
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className="relative min-h-screen antialiased">
         <script
           type="application/ld+json"
@@ -55,6 +60,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Providers localPhotos={realMenuPhotos()}>
           <SmoothScroll />
           <Nav />
+          {/* Phones: room for the shop switch row in the header (see Nav). */}
+          <div aria-hidden className="h-[56px] md:hidden" />
           <main id="main">{children}</main>
           <Footer />
           <BagDrawer />

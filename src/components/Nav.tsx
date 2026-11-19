@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { NAV, SHOP_NAME } from "@/lib/site";
 import { useBag, useStore } from "./providers";
 import StoreToggle from "./StoreToggle";
@@ -110,6 +111,11 @@ export default function Nav() {
           >
             <MenuIcon />
           </button>
+        </div>
+        {/* Phones and small tablets: the shop switch and its open status, always in view under the bar. */}
+        <div className="glass mx-auto mt-2 flex max-w-[1240px] items-center gap-2.5 rounded-full p-1 pr-3.5 md:hidden">
+          <StoreToggle id="nav-mobile" size="md" className="shrink-0" />
+          <OpenBadge store={store} showHours="short" className="min-w-0 text-[0.8rem]" />
         </div>
       </header>
 

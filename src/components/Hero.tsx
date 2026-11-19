@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import HeroVideo from "./HeroVideo";
 import HeroDepth from "./HeroDepth";
+import HeroScrollCue from "./HeroScrollCue";
 import { ArrowRight } from "./icons";
 
 /**
@@ -12,7 +13,7 @@ import { ArrowRight } from "./icons";
 export default function Hero() {
   return (
     // isolate + a cream base so the beans layer's multiply blend only sees the hero.
-    <section data-hero className="relative isolate overflow-hidden bg-porcelain pb-14 pt-[92px] md:pt-[108px]">
+    <section data-hero className="hero-screen relative isolate overflow-hidden bg-porcelain pb-14 pt-[92px] md:pt-[108px]">
       <HeroDepth layer="back" />
       <div className="shell flex flex-col items-center text-center">
         <h1 className="relative z-10 m-0">
@@ -31,7 +32,7 @@ export default function Hero() {
           <span className="script foil-text px-1 text-[1.7rem] lg:text-[2.1rem]">Since 1871</span>
         </p>
 
-        <div className="relative z-[1] -mx-5 -mt-2 w-[calc(100%+40px)] max-w-[820px]">
+        <div className="hero-video-fit relative z-[1] -mx-5 -mt-2 w-[calc(100%+40px)] max-w-[820px]">
           {/* Soft warm light behind the clip. */}
           <div aria-hidden className="absolute inset-[-12%]" style={{ background: "radial-gradient(ellipse 42% 44% at 50% 50%, rgba(255, 236, 200, 0.7), rgba(255, 236, 200, 0) 72%)" }} />
           <HeroVideo className="aspect-video w-full" />
@@ -50,6 +51,7 @@ export default function Hero() {
         </div>
       </div>
       <HeroDepth layer="front" />
+      <HeroScrollCue />
     </section>
   );
 }

@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { useMemo, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { menuFor, money, type CategoryId, type MenuCategory, type MenuItem } from "@/lib/menu";
 import { useBag, useMenuPhoto, useStore } from "./providers";
 import { STORES, type StoreId } from "@/lib/site";

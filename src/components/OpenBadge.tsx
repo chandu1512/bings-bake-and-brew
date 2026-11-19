@@ -19,8 +19,8 @@ export default function OpenBadge({
   store: Store;
   tone?: "light" | "dark";
   className?: string;
-  /** When closed, show the shop's hours (e.g. "Mon–Sat 7:30am–3pm") instead of the next opening. */
-  showHours?: boolean;
+  /** When closed, show the shop's hours instead of the next opening: true -> "Mon–Sat 7:30am–3pm", "short" -> "7:30am–3pm". */
+  showHours?: boolean | "short";
 }) {
   const now = useNow();
   const status = now ? openStatus(store, now) : null;
@@ -33,9 +33,9 @@ export default function OpenBadge({
       <AnimatePresence mode="wait" initial={false}>
         <motion.span
           key={key}
-          initial={{ opacity: 0, filter: "blur(3px)" }}
-          animate={{ opacity: 1, filter: "blur(0px)" }}
-          exit={{ opacity: 0, filter: "blur(3px)" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           transition={{ duration: 0.18, ease: [0.23, 1, 0.32, 1] }}
           // Until the visitor's clock is known, hold the space but show nothing, so the
           // line fades in once as "Open now" or "Closed" instead of visibly swapping text.
@@ -59,7 +59,9 @@ export default function OpenBadge({
                 {status.closingSoon
                   ? `closing soon, ${clock(first!.close)}`
                   : showHours && !status.open && first
-                    ? hoursShort(store)
+                    ? showHours === "short"
+                      ? `${clock(first.open)}–${clock(first.close)}`
+                      : hoursShort(store)
                     : status.detail}
               </span>
             </>

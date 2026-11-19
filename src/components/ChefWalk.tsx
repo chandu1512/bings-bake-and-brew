@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowRight } from "./icons";
+import { chefFormat, prepareInlineVideo, type ChefFormat } from "@/lib/media-support";
 
 /**
  * The baker mascot on the history timeline. Desktop (horizontal timeline): when
@@ -26,18 +27,40 @@ const FEET_X = 97;
 /** Wanted trip length. The walk speeds up to MAX_RATE at most to get close; beyond that the trip simply takes longer, so the feet never slide. */
 const TARGET_SECONDS = 9;
 const MAX_RATE = 1.8;
+/** The animated WebP fallback (scripts: see public/chef) runs every walk frame at 20ms, i.e. 1.67x, and the wave in real time. */
+const WEBP_WALK_RATE = 1000 / 30 / 20;
+const WAVE_MS = (156 / 30) * 1000;
 
 type Phase = "idle" | "walking" | "waving" | "done";
 
-function Sources({ name }: { name: "walk" | "wave" }) {
-  return (
+/** Which transparent format this browser gets; null until mounted. See src/lib/media-support.ts. */
+function useChefFormat() {
+  const [fmt, setFmt] = useState<ChefFormat | null>(null);
+  useEffect(() => setFmt(chefFormat()), []);
+  // If the browser refuses to play the video (e.g. iOS Low Power Mode), switch to the
+  // animated WebP: images are never autoplay-blocked, so he never slides along frozen.
+  const blocked = useCallback(() => setFmt("webp"), []);
+  return [fmt, blocked] as const;
+}
+
+/**
+ * HEVC-with-alpha first for Safari (the only alpha video WebKit can show), then
+ * VP9 WebM for Chrome and Firefox. WebKit is never offered the WebM, because it
+ * would play it with a solid box behind him.
+ */
+function Sources({ name, fmt }: { name: "walk" | "wave"; fmt: ChefFormat }) {
+  return fmt === "hevc" ? (
     <>
-      {/* Safari: HEVC with alpha. Everyone else: VP9 WebM with alpha. */}
       <source src={`/chef/${name}.mov`} type='video/mp4; codecs="hvc1"' />
-      <source src={`/chef/${name}.webm`} type="video/webm" />
+      <source src={`/chef/${name}.mov`} type='video/quicktime; codecs="hvc1"' />
     </>
+  ) : (
+    <source src={`/chef/${name}.webm`} type='video/webm; codecs="vp9"' />
   );
 }
+
+/** Animated WebP restarts per URL, so each trip gets its own copy of the wave. */
+const waveWebp = (trip: number) => `/chef/wave.webp?t=${trip}`;
 
 function Bubble({ onReplay, showReplay }: { onReplay?: () => void; showReplay: boolean }) {
   return (
@@ -57,7 +80,10 @@ function Bubble({ onReplay, showReplay }: { onReplay?: () => void; showReplay: b
 
 /** Horizontal timeline (lg and up): the walk. */
 function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
+  const [fmt, onBlocked] = useChefFormat();
   const root = useRef<HTMLDivElement>(null);
+  const phaseRef = useRef<Phase>("idle");
+  const onScreen = useRef(false);
   const mover = useRef<HTMLDivElement>(null);
   const walk = useRef<HTMLVideoElement>(null);
   const wave = useRef<HTMLVideoElement>(null);
@@ -81,6 +107,15 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
     const el = root.current?.closest("section");
     if (!el || reduce || !wide) return;
     const far = new IntersectionObserver(([e]) => setNear(e.isIntersecting), { rootMargin: "100% 0px" });
+    // Pause the walk while the section is off screen (he keeps his place); resume when it is back.
+    const visible = new IntersectionObserver(([e]) => {
+      onScreen.current = e.isIntersecting;
+      const v = walk.current;
+      if (!v) return;
+      if (e.isIntersecting && phaseRef.current === "walking") v.play().catch(onBlocked);
+      else v.pause();
+    });
+    visible.observe(el);
     const seen = new IntersectionObserver(([e]) => {
       if (e.isIntersecting) setTrip((t) => (t === 0 ? 1 : t));
     }, { threshold: 0.35 });
@@ -89,6 +124,7 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
     return () => {
       far.disconnect();
       seen.disconnect();
+      visible.disconnect();
       setNear(false);
     };
   }, [reduce, wide]);
@@ -104,11 +140,11 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
 
   // One trip along the line.
   useEffect(() => {
-    if (!trip || !near || reduce) return;
+    if (!trip || !near || reduce || !fmt) return;
     const box = root.current;
     const m = mover.current;
     const v = walk.current;
-    if (!box || !m || !v || !m.offsetHeight) return;
+    if (!box || !m || !m.offsetHeight || (fmt !== "webp" && !v)) return;
     const dots = [...box.parentElement!.querySelectorAll<HTMLElement>("[data-dot]")];
     const stops = [...box.parentElement!.querySelectorAll<HTMLElement>("[data-stop]")];
     if (dots.length < 2) return;
@@ -123,15 +159,19 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
     const to = xs[xs.length - 1] - feet;
     const distance = to - from;
     // Travel exactly as fast as the planted foot moves back, so it never slides.
-    const rate = Math.min(MAX_RATE, Math.max(1, distance / TARGET_SECONDS / (FOOT_SPEED * scale)));
+    const rate = fmt === "webp" ? WEBP_WALK_RATE : Math.min(MAX_RATE, Math.max(1, distance / TARGET_SECONDS / (FOOT_SPEED * scale)));
     const seconds = distance / (FOOT_SPEED * scale * rate);
 
     clear();
     stops.forEach((s) => s.removeAttribute("data-passed"));
     setPhase("walking");
-    v.currentTime = 0;
-    v.playbackRate = rate;
-    v.play().catch(() => {});
+    phaseRef.current = "walking";
+    if (v) {
+      prepareInlineVideo(v);
+      v.currentTime = 0;
+      v.playbackRate = rate;
+      if (onScreen.current) v.play().catch(onBlocked);
+    }
 
     anim.current = m.animate([{ transform: `translateX(${from}px)` }, { transform: `translateX(${to}px)` }], {
       duration: seconds * 1000,
@@ -144,21 +184,32 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
       timers.current.push(window.setTimeout(() => stops[i]?.setAttribute("data-passed", ""), at));
     });
     // Halfway: start loading the wave.
-    timers.current.push(window.setTimeout(() => setWaveLoaded(true), (seconds * 1000) / 2));
+    timers.current.push(
+      window.setTimeout(() => {
+        setWaveLoaded(true);
+        if (fmt === "webp") new Image().src = waveWebp(trip);
+      }, (seconds * 1000) / 2),
+    );
     // Arrived: crossfade into the wave.
     timers.current.push(
       window.setTimeout(() => {
         setPhase("waving");
+        phaseRef.current = "waving";
         const w = wave.current;
-        if (w) {
+        if (fmt === "webp") {
+          timers.current.push(window.setTimeout(() => setPhase("done"), WAVE_MS));
+        } else if (w) {
+          prepareInlineVideo(w);
           w.currentTime = 0;
-          w.play().catch(() => setPhase("done"));
+          w.play().catch(() => {
+            setPhase("done");
+          });
         } else setPhase("done");
-        window.setTimeout(() => v.pause(), 160);
+        window.setTimeout(() => v?.pause(), 160);
       }, seconds * 1000),
     );
     return clear;
-  }, [trip, near, reduce]);
+  }, [trip, near, reduce, fmt, onBlocked]);
 
   const replay = useCallback(() => setTrip((t) => t + 1), []);
 
@@ -175,7 +226,11 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
     <div ref={root} className="pointer-events-none absolute inset-x-0 hidden lg:block" style={{ height: 140, bottom: "calc(100% - 4px)" }}>
       <div ref={mover} className="chef-mover absolute bottom-0 left-0" style={{ height: 140, width: (140 * CLIP_W) / CLIP_H }}>
         <div aria-hidden className="relative h-full w-full">
-          {near && (
+          {near && fmt === "webp" && phase === "walking" && (
+            // eslint-disable-next-line @next/next/no-img-element -- transparent animated fallback for WebKit without HEVC alpha
+            <img src="/chef/walk.webp" alt="" className="absolute inset-0 h-full w-full" />
+          )}
+          {near && fmt && fmt !== "webp" && (
             <video
               ref={walk}
               muted
@@ -183,13 +238,17 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
               loop
               preload="auto"
               disablePictureInPicture
-              className="absolute inset-0 h-full w-full transition-opacity duration-150"
+              className="chef-video absolute inset-0 h-full w-full transition-opacity duration-150"
               style={{ opacity: phase === "walking" || phase === "idle" ? 1 : 0 }}
             >
-              <Sources name="walk" />
+              <Sources name="walk" fmt={fmt} />
             </video>
           )}
-          {near && waveLoaded && (
+          {near && fmt === "webp" && phase === "waving" && (
+            // eslint-disable-next-line @next/next/no-img-element -- transparent animated fallback, plays once
+            <img src={waveWebp(trip)} alt="" className="absolute inset-0 h-full w-full" />
+          )}
+          {near && waveLoaded && fmt && fmt !== "webp" && (
             <video
               ref={wave}
               muted
@@ -197,10 +256,10 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
               preload="auto"
               disablePictureInPicture
               onEnded={() => setPhase("done")}
-              className="absolute inset-0 h-full w-full transition-opacity duration-150"
+              className="chef-video absolute inset-0 h-full w-full transition-opacity duration-150"
               style={{ opacity: phase === "waving" ? 1 : 0 }}
             >
-              <Sources name="wave" />
+              <Sources name="wave" fmt={fmt} />
             </video>
           )}
           {/* eslint-disable-next-line @next/next/no-img-element -- transparent still, swapped in over the video */}
@@ -240,29 +299,51 @@ function ReducedAtToday() {
 
 /** Vertical timeline (phones, tablets): he stands at Today and waves once. */
 function MobileWave({ reduce }: { reduce: boolean }) {
+  const [fmt, onBlocked] = useChefFormat();
   const root = useRef<HTMLDivElement>(null);
+  const video = useRef<HTMLVideoElement>(null);
   const [state, setState] = useState<"idle" | "play" | "done">(reduce ? "done" : "idle");
   useEffect(() => {
     const el = root.current;
     // Reduced motion is only known after mount: go straight to the still and the bubble.
     if (reduce) return setState("done");
     if (!el) return;
+    // Starts once he is half in view; pauses whenever he scrolls off screen.
     const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) {
-        setState((s) => (s === "idle" ? "play" : s));
-        io.disconnect();
+      if (e.isIntersecting) setState((s) => (s === "idle" ? "play" : s));
+      const v = video.current;
+      if (v && !v.ended) {
+        if (e.isIntersecting) v.play().catch(onBlocked);
+        else v.pause();
       }
     }, { threshold: 0.5 });
     io.observe(el);
     return () => io.disconnect();
-  }, [reduce]);
+  }, [reduce, onBlocked]);
+
+  // Video: prepare it for inline muted playback, then play. WebP: it plays once by itself.
+  useEffect(() => {
+    if (state !== "play" || !fmt) return;
+    if (fmt === "webp") {
+      const t = window.setTimeout(() => setState("done"), WAVE_MS);
+      return () => window.clearTimeout(t);
+    }
+    const v = video.current;
+    if (!v) return;
+    prepareInlineVideo(v);
+    v.play().catch(onBlocked);
+  }, [state, fmt, onBlocked]);
 
   return (
     <div ref={root} className="mt-6 flex items-end gap-3 lg:hidden">
       <div aria-hidden className="relative shrink-0" style={{ height: 120, width: (120 * CLIP_W) / CLIP_H }}>
-        {state === "play" && (
-          <video muted playsInline autoPlay preload="auto" disablePictureInPicture onEnded={() => setState("done")} className="absolute inset-0 h-full w-full">
-            <Sources name="wave" />
+        {state === "play" && fmt === "webp" && (
+          // eslint-disable-next-line @next/next/no-img-element -- transparent animated fallback, plays once
+          <img src={waveWebp(0)} alt="" className="absolute inset-0 h-full w-full" />
+        )}
+        {state === "play" && fmt && fmt !== "webp" && (
+          <video ref={video} muted playsInline autoPlay preload="auto" disablePictureInPicture onEnded={() => setState("done")} className="chef-video absolute inset-0 h-full w-full">
+            <Sources name="wave" fmt={fmt} />
           </video>
         )}
         {/* eslint-disable-next-line @next/next/no-img-element -- transparent still */}

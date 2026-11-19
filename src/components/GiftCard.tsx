@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 /**
  * A drawn gift card that tilts toward the pointer, with a glare that follows.

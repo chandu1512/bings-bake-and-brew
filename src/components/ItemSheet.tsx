@@ -3,7 +3,8 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { itemById, money, type MenuItem, type Option, type OptionGroup } from "@/lib/menu";
 import { choiceError, defaultChoices } from "@/lib/pricing";
 import { useBag, useMenuPhoto, useStore } from "./providers";
@@ -304,7 +305,7 @@ export default function ItemSheet() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 h-full w-full cursor-default bg-espresso/70 backdrop-blur-[3px]"
+            className="absolute inset-0 h-full w-full cursor-default bg-espresso/70"
           />
           <motion.div
             initial={reduce ? { opacity: 0 } : { y: "100%", opacity: 0.6 }}

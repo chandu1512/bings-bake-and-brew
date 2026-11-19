@@ -65,7 +65,8 @@ export default function HeroDepth({ layer }: { layer: "back" | "front" }) {
         const L = STORES[sid].layers;
         const on = sid === id;
         return (
-          <div key={sid} className={`depth-set depth-${L.blend}`} style={{ opacity: on ? 1 : 0 }}>
+          // Only the far layer blends (multiply); the near layer is a pre-keyed image with normal blending.
+          <div key={sid} className={`depth-set ${layer === "back" ? `depth-${L.blend}` : ""}`} style={{ opacity: on ? 1 : 0 }}>
             {layer === "back" ? (
               <>
                 {/* "match" images: the hero takes the image's own backdrop colour. */}
@@ -80,7 +81,7 @@ export default function HeroDepth({ layer }: { layer: "back" | "front" }) {
             ) : (
               <div className="depth-near-wrap">
                 {/* eslint-disable-next-line @next/next/no-img-element -- decorative, CSS-transformed layer */}
-                <img src={L.src} alt="" decoding="async" loading="lazy" className="depth-near" />
+                <img src={L.near} alt="" decoding="async" loading="lazy" className="depth-near" />
               </div>
             )}
           </div>

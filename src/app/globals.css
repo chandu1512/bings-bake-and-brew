@@ -249,8 +249,7 @@
   /* Counter glass: the nav bar, the shop switch, the bag */
   .glass {
     background: rgba(251, 245, 234, 0.8);
-    -webkit-backdrop-filter: blur(18px) saturate(150%);
-    backdrop-filter: blur(18px) saturate(150%);
+
     box-shadow:
       inset 0 0 0 1px rgba(255, 255, 255, 0.7),
       inset 0 1px 0 #fff,
@@ -287,7 +286,6 @@
   /* A gold light leak that drifts across now and then */
   .light-leak {
     background: linear-gradient(105deg, transparent 30%, rgba(236, 213, 156, 0.2) 46%, rgba(201, 161, 90, 0.1) 54%, transparent 68%);
-    mix-blend-mode: screen;
     transform: translateX(-110%);
     animation: leak 13s ease-in-out 2s infinite;
   }
@@ -312,7 +310,6 @@
     background-image: var(--grain), linear-gradient(180deg, rgba(201, 161, 90, 0.1), rgba(58, 36, 24, 0.22));
     background-size: 160px 160px, auto;
     opacity: 0.5;
-    mix-blend-mode: multiply;
   }
   .floaty { animation: floaty 7s ease-in-out infinite alternate; }
   .film-strip { -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
@@ -326,8 +323,8 @@
     pointer-events: none;
     background-image: var(--grain);
     background-size: 180px 180px;
-    opacity: 0.16;
-    mix-blend-mode: soft-light;
+    /* Normal blending (was soft-light): only the hero's far layer blends, to keep tablets and phones fast. */
+    opacity: 0.08;
     /* Still grain: animating it repainted whole sections many times a second. */
   }
   .hero-canvas { animation: hero-in 900ms var(--ease-out) both; }
@@ -458,7 +455,7 @@
 .depth-far { transform: translate3d(calc(var(--hx, 0) * -8px), calc(var(--hy, 0) * -8px), 0); }
 .depth-near {
   transform: translate3d(calc(var(--hx, 0) * 24px), calc(var(--hy, 0) * 24px), 0) scale(1.7);
-  filter: blur(6px);
+  /* Pre-blurred file (beans-near / flour-near): no live blur() filter. */
   opacity: 0.9;
 }
 .depth-far-phone { display: none; }
@@ -521,4 +518,51 @@
 @keyframes dot-glow { 0% { opacity: 0; transform: scale(0.6); } 30% { opacity: 1; transform: scale(1.6); } 100% { opacity: 0.35; transform: scale(1.2); } }
 @media (prefers-reduced-motion: reduce) {
   .chef-breathe, .chef-bubble, [data-passed] .timeline-dot::after { animation: none; }
+}
+
+/* ---------- Phone hero: exactly one screen (src/components/Hero.tsx) ---------- */
+/* Under 768px only; desktop and laptop are untouched. The hero sits below a 56px
+   spacer (layout.tsx), so it is one screen tall minus that. The fixed header plus the
+   shop switch row reach 72px + the top safe area (min 12px) into it, so the content
+   starts below that and is centred in the space left; 52px at the bottom for the cue. */
+@media (max-width: 767px) {
+  .hero-screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: calc(100vh - 56px);
+    min-height: calc(100svh - 56px);
+    padding-top: calc(72px + max(12px, env(safe-area-inset-top)));
+    padding-bottom: 52px;
+  }
+  /* Short phones: the video gets whatever height is left after the logo, line and button
+     (about 437px plus the safe area) and shrinks, rather than pushing the button off screen. */
+  .hero-video-fit {
+    width: min(calc(100% + 40px), max(200px, calc((100vh - 437px - max(12px, env(safe-area-inset-top))) * 16 / 9)));
+    width: min(calc(100% + 40px), max(200px, calc((100svh - 437px - max(12px, env(safe-area-inset-top))) * 16 / 9)));
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+.hero-cue { transition: opacity 400ms ease-out; }
+.hero-cue-chevron { animation: hero-cue 1.8s ease-in-out infinite; }
+@keyframes hero-cue { 0%, 100% { transform: translate3d(0, 0, 0); opacity: 0.6; } 50% { transform: translate3d(0, 5px, 0); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .hero-cue-chevron { animation: none; } }
+
+/* Frosted glass only in the header; everywhere else .glass is a plain tint (no backdrop-filter). */
+header .glass {
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
+}
+
+/* Inline background videos: never show Safari's native play button or controls,
+   even when autoplay is refused (e.g. Low Power Mode). */
+video.hero-video::-webkit-media-controls,
+video.hero-video::-webkit-media-controls-start-playback-button,
+video.hero-video::-webkit-media-controls-overlay-play-button,
+video.chef-video::-webkit-media-controls,
+video.chef-video::-webkit-media-controls-start-playback-button,
+video.chef-video::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+  -webkit-appearance: none;
 }
