@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
-import { DEFAULT_STORE, STORE_IDS, STORES, heroVideoFiles, type StoreId } from "@/lib/site";
+import { DEFAULT_STORE, STORE_IDS, STORES, heroGlowX, heroShift, heroVideoFiles, type StoreId } from "@/lib/site";
 import { useStore } from "./providers";
 import { prepareInlineVideo } from "@/lib/media-support";
 
@@ -136,6 +136,17 @@ export default function HeroVideo({ className = "" }: { className?: string }) {
     };
   }, [hold, release, play]);
 
+  // Centre this shop's subject on phones and tablets: the shift lives on the .hero-video-fit
+  // box (Hero.tsx), so the warm glow and contact shadow move with the clip.
+  useEffect(() => {
+    const fit = wrap.current?.parentElement;
+    if (!fit) return;
+    const v = STORES[id].video;
+    fit.style.setProperty("--hero-shift", heroShift(v));
+    fit.style.setProperty("--hero-focus", `${v.heroFocusX}%`);
+    fit.style.setProperty("--hero-glow-x", heroGlowX(v, 12));
+  }, [id]);
+
   // Reduced motion: never play; the poster stays.
   useEffect(() => {
     if (reduce) video.current?.pause();
@@ -189,8 +200,12 @@ export default function HeroVideo({ className = "" }: { className?: string }) {
         <div
           key={`bg-${sid}`}
           aria-hidden
-          className="absolute inset-[-8%] transition-opacity duration-[600ms] ease-out"
-          style={{ opacity: sid === id ? 1 : 0, background: `radial-gradient(ellipse 55% 55% at 50% 50%, ${STORES[sid].video.bg} 40%, transparent 100%)` }}
+          className="hero-clip-glow absolute inset-[-8%] transition-opacity duration-[600ms] ease-out"
+          style={{
+            opacity: sid === id ? 1 : 0,
+            ["--gx-sm" as string]: heroGlowX(STORES[sid].video, 8),
+            background: `radial-gradient(ellipse 55% 55% at var(--gx, 50%) 50%, ${STORES[sid].video.bg} 40%, transparent 100%)`,
+          }}
         />
       ))}
       {/* Posters: the first frame of each shop's clip, crossfading with the shop. */}

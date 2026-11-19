@@ -560,9 +560,20 @@
   .hero-video-fit {
     width: min(calc(100% + 40px), max(200px, calc((100vh - 437px - max(12px, env(safe-area-inset-top))) * 16 / 9)));
     width: min(calc(100% + 40px), max(200px, calc((100svh - 437px - max(12px, env(safe-area-inset-top))) * 16 / 9)));
-    margin-left: auto;
-    margin-right: auto;
+    /* Centred by the hero's items-center. Not auto margins: when the box is wider than the
+       column (100% + 40px), auto margins collapse to 0 and it hung 20px off to the right. */
+    margin-left: 0;
+    margin-right: 0;
   }
+}
+/* Phones and tablets: line the clip's subject (heroFocusX in site.ts) up with the screen
+   centre. Laptops and desktops with a mouse keep the frame centred, unchanged. */
+@media (max-width: 767px), (hover: none) and (pointer: coarse) {
+  .hero-video-fit { transform: translateX(var(--hero-shift, 0)); transition: transform 600ms ease-out; }
+  /* The warm glow and contact shadow sit under the subject, not under the frame centre. */
+  .hero-glow { --gx: var(--hero-glow-x); }
+  .hero-clip-glow { --gx: var(--gx-sm); }
+  .hero-shadow { --sx: var(--hero-focus); }
 }
 .hero-cue { transition: opacity 400ms ease-out; }
 .hero-cue-chevron { animation: hero-cue 1.8s ease-in-out infinite; }

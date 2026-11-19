@@ -64,12 +64,34 @@ export type Store = {
  * everywhere, iOS included) and <base>-720-poster.webp / -480-poster.webp.
  * The rectangle edge is hidden with a CSS radial mask (HeroVideo.tsx).
  */
-export type HeroVideo = { base: string; label: string; /** The clip's own backdrop colour, glowed softly behind it. */ bg: string };
+export type HeroVideo = {
+  base: string;
+  label: string;
+  /** The clip's own backdrop colour, glowed softly behind it. */
+  bg: string;
+  /**
+   * Where the subject's centre sits across the frame, in % of the width (50 = middle).
+   * Phones and tablets shift the clip, with its glow and shadow, so this point lands on the
+   * screen centre. Laptops ignore it. Measured on 1280px-wide frames across the loop:
+   * brew = the pour stream and the cup body (not the handle), ~643px; bake = the whole
+   * croissant, ~649px.
+   */
+  heroFocusX: number;
+};
 
 export const HERO_VIDEOS = {
-  brew: { base: "/story/brew", label: "Espresso pouring into a white cup", bg: "#f0e6d2" },
-  bake: { base: "/story/bake", label: "A croissant splitting open, flakes flying", bg: "#f4f2e5" },
+  brew: { base: "/story/brew", label: "Espresso pouring into a white cup", bg: "#f0e6d2", heroFocusX: 50.2 },
+  bake: { base: "/story/bake", label: "A croissant splitting open, flakes flying", bg: "#f4f2e5", heroFocusX: 50.7 },
 } satisfies Record<string, HeroVideo>;
+
+/** The translateX that puts a clip's subject on the screen centre, as a % of the clip's width. */
+export const heroShift = (v: HeroVideo) => `${(50 - v.heroFocusX).toFixed(2)}%`;
+
+/**
+ * Where the subject falls inside a glow that overhangs the clip by `inset` % on each side
+ * (e.g. inset-[-12%]), as a % of that glow's own width, for centring the glow on it.
+ */
+export const heroGlowX = (v: HeroVideo, inset: number) => `${((inset + v.heroFocusX) / (1 + inset / 50)).toFixed(2)}%`;
 
 /** URLs for a hero clip at a size ("720" desktop, "480" phones and tablets in portrait). */
 export const heroVideoFiles = (v: HeroVideo, size: "720" | "480") => ({

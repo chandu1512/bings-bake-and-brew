@@ -4,6 +4,7 @@ import HeroVideo from "./HeroVideo";
 import HeroDepth from "./HeroDepth";
 import HeroScrollCue from "./HeroScrollCue";
 import { ArrowRight } from "./icons";
+import { DEFAULT_STORE, STORES, heroGlowX, heroShift } from "@/lib/site";
 
 /**
  * Home page hero: logo, "Since 1871", the selected shop's looping video in the
@@ -32,12 +33,21 @@ export default function Hero() {
           <span className="script foil-text px-1 text-[1.7rem] lg:text-[2.1rem]">Since 1871</span>
         </p>
 
-        <div className="hero-video-fit relative z-[1] -mx-5 -mt-2 w-[calc(100%+40px)] max-w-[820px]">
+        {/* --hero-shift (phones and tablets only, see globals.css) moves the glow, clip and shadow
+            together so the subject sits on the screen centre; HeroVideo updates it per shop. */}
+        <div
+          className="hero-video-fit relative z-[1] -mx-5 -mt-2 w-[calc(100%+40px)] max-w-[820px]"
+          style={{
+            ["--hero-shift" as string]: heroShift(STORES[DEFAULT_STORE].video),
+            ["--hero-focus" as string]: `${STORES[DEFAULT_STORE].video.heroFocusX}%`,
+            ["--hero-glow-x" as string]: heroGlowX(STORES[DEFAULT_STORE].video, 12),
+          }}
+        >
           {/* Soft warm light behind the clip. */}
-          <div aria-hidden className="absolute inset-[-12%]" style={{ background: "radial-gradient(ellipse 42% 44% at 50% 50%, rgba(255, 236, 200, 0.7), rgba(255, 236, 200, 0) 72%)" }} />
+          <div aria-hidden className="hero-glow absolute inset-[-12%]" style={{ background: "radial-gradient(ellipse 42% 44% at var(--gx, 50%) 50%, rgba(255, 236, 200, 0.7), rgba(255, 236, 200, 0) 72%)" }} />
           <HeroVideo className="aspect-video w-full" />
           {/* Soft contact shadow under the cup or croissant. */}
-          <div aria-hidden className="absolute bottom-[9%] left-1/2 h-[9%] w-[44%] -translate-x-1/2" style={{ background: "radial-gradient(ellipse 50% 50% at 50% 50%, rgba(74, 46, 28, 0.16), rgba(74, 46, 28, 0) 100%)" }} />
+          <div aria-hidden className="hero-shadow absolute bottom-[9%] h-[9%] w-[44%] -translate-x-1/2" style={{ left: "var(--sx, 50%)", background: "radial-gradient(ellipse 50% 50% at 50% 50%, rgba(74, 46, 28, 0.16), rgba(74, 46, 28, 0) 100%)" }} />
         </div>
 
         <p className="font-display relative z-10 -mt-3 max-w-[20ch] text-[clamp(1.6rem,2.9vw,2.5rem)] leading-[1.04]">
