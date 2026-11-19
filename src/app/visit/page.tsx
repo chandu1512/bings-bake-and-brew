@@ -4,6 +4,7 @@ import Image from "next/image";
 import ShopCards from "@/components/ShopCards";
 import { STAND_INS, STORE_IDS, STORES } from "@/lib/site";
 import { hoursSummary } from "@/lib/hours";
+import BeanDivider from "@/components/BeanDivider";
 
 export const metadata: Metadata = pageMeta({
   title: `Hours and Directions | ${TOWNS}`,
@@ -15,9 +16,10 @@ export default function VisitPage() {
   return (
     <>
       <section className="shell pb-20 pt-[120px] md:pt-[150px] lg:pb-28">
-        <div className="mb-12 grid gap-6 lg:grid-cols-12 lg:items-end">
-          <h1 className="display-xl lg:col-span-7">Find us on Main Street. Either one.</h1>
-          <ul className="lede space-y-1 lg:col-span-5">
+        <div className="section-head">
+          <h1 className="display-xl max-w-[20ch]">Find us on Main Street. Either one.</h1>
+          <BeanDivider />
+          <ul className="lede space-y-1">
             {STORE_IDS.map((id) => (
               <li key={id}>
                 <strong className="font-semibold text-ink">{STORES[id].name}:</strong> {hoursSummary(STORES[id])}

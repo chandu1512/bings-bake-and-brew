@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import BeanDivider from "@/components/BeanDivider";
 
 const EASE = [0.23, 1, 0.32, 1] as const;
 
@@ -60,7 +61,8 @@ export default function Awards() {
           <h2 id="awards-h" className="mt-2 font-display text-[clamp(2.1rem,4.4vw,3.6rem)] leading-[1.05]">
             Delaware keeps <em className="text-gold">voting for us.</em>
           </h2>
-          <p className="mx-auto mt-4 max-w-[52ch] text-white/70">
+          <BeanDivider tone="dark" className="mt-5" />
+          <p className="subtitle mx-auto mt-5 max-w-[52ch] !text-white/75">
             Ribbons for the coffee bar, and a century and a half of recognition for the bakery behind it.
           </p>
         </motion.div>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Checkout from "@/components/Checkout";
+import BeanDivider from "@/components/BeanDivider";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -10,7 +11,10 @@ export const metadata: Metadata = {
 export default function CheckoutPage() {
   return (
     <div className="shell pb-24 pt-28 md:pt-36">
-      <h1 className="display-lg mb-8 md:mb-10">Checkout</h1>
+      <div className="section-head">
+        <h1 className="display-lg">Checkout</h1>
+        <BeanDivider />
+      </div>
       <Checkout />
     </div>
   );

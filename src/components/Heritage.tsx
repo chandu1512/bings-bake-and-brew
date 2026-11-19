@@ -37,7 +37,7 @@ const HEADING = "The bakery behind the coffee bar.";
  */
 export default function Heritage() {
   return (
-    <section aria-labelledby="story-h" className="hero-band relative overflow-hidden text-white">
+    <section aria-labelledby="story-h" data-keep-type className="hero-band relative overflow-hidden text-white">
       <div aria-hidden className="absolute inset-y-0 right-0 hidden w-[52%] [mask-image:linear-gradient(90deg,transparent,#000_60%)] lg:block">
         <Image src="/photos/elkton/baked-goods--crumb-cake.jpg" alt="A square of Bing's crumb cake" fill sizes="52vw" className="film-grade object-cover opacity-30" />
       </div>

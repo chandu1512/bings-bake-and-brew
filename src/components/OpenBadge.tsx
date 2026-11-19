@@ -49,7 +49,7 @@ export default function OpenBadge({
           />
           {status ? (
             <>
-              <span className={`font-semibold ${status.open ? (dark ? "text-[#7fd6a4]" : "text-leaf") : ""}`}>
+              <span className={`font-semibold ${status.open ? (dark ? "text-[#7fd6a4]" : "text-[#145C38]") : ""}`}>
                 {status.state}
               </span>
               <span aria-hidden className={dark ? "text-white/40" : "text-ink/30"}>

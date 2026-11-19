@@ -37,7 +37,11 @@
 
   html { scrollbar-gutter: stable; }
   body {
-    background-color: var(--porcelain);
+    /* Kraft paper: public/textures/paper.webp, tiled at 512px. */
+    background-color: #eadfcb;
+    background-image: url("/textures/paper.webp");
+    background-size: 512px 512px;
+    background-repeat: repeat;
     color: var(--ink);
     font-family: "Jost Variable", "Jost", system-ui, sans-serif;
     font-size: 1.04rem;
@@ -59,20 +63,30 @@
     transform: translateZ(0);
   }
 
-  h1, h2 {
-    font-family: "Playfair Display Variable", "Playfair Display", Georgia, serif;
-    font-weight: 500;
-    letter-spacing: -0.015em;
-    line-height: 1;
+  /* Headings, section titles and menu item names: classic Bing's caps. */
+  h1, h2, h3 {
+    font-family: var(--font-marcellus), Georgia, serif;
+    font-weight: 400;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    line-height: 1.15;
     text-wrap: balance;
   }
-  h1 em, h2 em, h3 em { font-style: italic; font-weight: 400; color: var(--cherry); }
-
-  h3, h4 {
+  h1 em, h2 em, h3 em { font-style: normal; font-weight: 400; color: var(--cherry); }
+  h4 {
     font-weight: 600;
-    letter-spacing: -0.005em;
     line-height: 1.15;
   }
+
+  /* The history band keeps its original type (Playfair, mixed case). */
+  [data-keep-type] :is(h1, h2, h3), [data-keep-type] .font-display {
+    font-family: "Playfair Display Variable", "Playfair Display", Georgia, serif;
+    text-transform: none;
+    letter-spacing: -0.015em;
+    line-height: 1;
+  }
+  [data-keep-type] h2 { font-weight: 500; }
+  [data-keep-type] .display-lg { font-size: clamp(2.2rem, 4.6vw, 3.9rem); }
 
   p { text-wrap: pretty; }
 
@@ -109,27 +123,43 @@
   }
   @media (min-width: 768px) { .shell { padding-inline: 40px; } }
 
-  .font-display { font-weight: 500; letter-spacing: -0.012em; }
+  .font-display { font-weight: 400; }
 
-  .display-xl { font-size: clamp(2.7rem, 5.4vw, 4.9rem); }
-  .display-lg { font-size: clamp(2.2rem, 4.6vw, 3.9rem); }
-  .display-md { font-size: clamp(1.7rem, 2.8vw, 2.4rem); line-height: 1.06; }
+  /* Uppercase Marcellus runs wide, so the display sizes are a step smaller than before. */
+  .display-xl { font-size: clamp(2rem, 4.2vw, 3.5rem); }
+  .display-lg { font-size: clamp(1.75rem, 3.4vw, 2.8rem); }
+  .display-md { font-size: clamp(1.35rem, 2.2vw, 1.8rem); line-height: 1.15; }
 
-  /* Every large section heading opens with a short gold rule and a diamond. */
-  .display-lg::before {
-    content: "";
-    display: block;
-    width: 92px;
-    height: 9px;
-    margin-bottom: 20px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='92' height='9'%3E%3Cpath d='M0 4.5h34M58 4.5h34' stroke='%23C9A15A'/%3E%3Cpath d='M46 0.5l4 4-4 4-4-4z' fill='%23C9A15A'/%3E%3C/svg%3E") no-repeat;
+  /* Section heading block: centred, generous space above and below. Heading, then
+     <BeanDivider />, then the subtitle. */
+  .section-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+    margin-bottom: 48px;
+  }
+  @media (min-width: 768px) { .section-head { gap: 22px; margin-bottom: 64px; } }
+
+  /* Subtitles and small notes: light, airy sans, sentence case. #4a3a32 on the paper is about 8:1. */
+  .lede, .subtitle {
+    font-family: var(--font-open-sans), system-ui, sans-serif;
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    line-height: 1.6;
+    color: #4a3a32;
+  }
+  .lede {
+    font-size: clamp(1.05rem, 1.25vw, 1.2rem);
+    max-width: 48ch;
   }
 
-  .lede {
-    font-size: clamp(1.08rem, 1.3vw, 1.24rem);
-    line-height: 1.55;
-    color: #4a3a32;
-    max-width: 44ch;
+  /* A section on clean white, full width even inside .shell. */
+  .band-white {
+    background: #fff;
+    box-shadow: 0 0 0 100vmax #fff;
+    clip-path: inset(0 -100vmax);
   }
 
   /* Hand-lettered accent: "Since 1871" and small flourishes */
@@ -247,8 +277,9 @@
   .link-under { text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: var(--gold); font-weight: 600; }
 
   /* Counter glass: the nav bar, the shop switch, the bag */
+  /* Outside the header there is no backdrop blur, so the tint is nearly opaque to keep text readable over content. */
   .glass {
-    background: rgba(251, 245, 234, 0.8);
+    background: rgba(251, 245, 234, 0.97);
 
     box-shadow:
       inset 0 0 0 1px rgba(255, 255, 255, 0.7),
@@ -414,86 +445,72 @@
 }
 
 /* ---------- Hero depth (src/components/HeroDepth.tsx) ---------- */
-/* Back to front: far image, the video, near image. Only transforms move. */
+/* Back: one static composited image. Front: pre-blurred transparent near layer in
+   two edge strips that never overlap the video. No filters, no blend modes, and on
+   touch devices nothing moves. */
 .depth-set {
   position: absolute;
   inset: 0;
   transition: opacity 600ms ease-out;
-  /* Fade every layer, and the "match" background colour, into the page at the bottom. */
-  -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
 }
-.depth-multiply { mix-blend-mode: multiply; }
-
-/* Keep the middle clear: logo, cup or croissant, headline. */
-.depth-far-wrap,
-.depth-near-wrap {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-.depth-far-wrap {
-  -webkit-mask-image: radial-gradient(ellipse 36% 52% at 50% 46%, transparent 55%, #000 100%);
-  mask-image: radial-gradient(ellipse 36% 52% at 50% 46%, transparent 55%, #000 100%);
-}
-.depth-near-wrap {
-  -webkit-mask-image: linear-gradient(to right, #000 0%, transparent 15%, transparent 85%, #000 100%);
-  mask-image: linear-gradient(to right, #000 0%, transparent 15%, transparent 85%, #000 100%);
-}
-
-.depth-far,
-.depth-near {
+.depth-far {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+.depth-near-strip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  /* The outer 15% of the hero, as before the restyle. */
+  width: 15%;
+  overflow: hidden;
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+.depth-near-left {
+  left: 0;
+  -webkit-mask-image: linear-gradient(to right, #000, transparent), linear-gradient(to bottom, #000 70%, transparent);
+  mask-image: linear-gradient(to right, #000, transparent), linear-gradient(to bottom, #000 70%, transparent);
+}
+.depth-near-right {
+  right: 0;
+  -webkit-mask-image: linear-gradient(to left, #000, transparent), linear-gradient(to bottom, #000 70%, transparent);
+  mask-image: linear-gradient(to left, #000, transparent), linear-gradient(to bottom, #000 70%, transparent);
+}
+/* The near image spans the whole hero width, so its 1.7x scale centres on the hero. */
+.depth-near {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100vw;
+  max-width: none;
+  object-fit: cover;
+  transform: scale(1.7);
+  opacity: 0.9;
+}
+.depth-near-left .depth-near { left: 0; }
+.depth-near-right .depth-near { right: 0; }
+
+/* Mouse parallax (desktop only: HeroDepth sets data-parallax only for a fine pointer). */
+[data-hero][data-parallax] .depth-far,
+[data-hero][data-parallax] .depth-near {
   will-change: transform;
   transition: transform 0.4s ease-out;
 }
-/* Pointer parallax: --hx/--hy run -1..1, written by HeroDepth inside requestAnimationFrame. */
-.depth-far { transform: translate3d(calc(var(--hx, 0) * -8px), calc(var(--hy, 0) * -8px), 0); }
-.depth-near {
-  transform: translate3d(calc(var(--hx, 0) * 24px), calc(var(--hy, 0) * 24px), 0) scale(1.7);
-  /* Pre-blurred file (beans-near / flour-near): no live blur() filter. */
-  opacity: 0.9;
-}
-.depth-far-phone { display: none; }
+/* With the mouse the near layer moves, so keep it beside the video box rather than over it. */
+[data-hero][data-parallax] .depth-near-strip { width: min(15%, max(0px, calc((100% - 880px) / 2))); }
+[data-hero][data-parallax] .depth-far { transform: translate3d(calc(var(--hx, 0) * -8px), calc(var(--hy, 0) * -8px), 0); }
+[data-hero][data-parallax] .depth-near { transform: translate3d(calc(var(--hx, 0) * 24px), calc(var(--hy, 0) * 24px), 0) scale(1.7); }
 
-/* Touch screens: no pointer, a very slow drift instead, different timing per layer. */
-@media (hover: none), (pointer: coarse) {
-  .depth-far { transition: none; animation: drift-far 12s ease-in-out infinite alternate; }
-  .depth-near { transition: none; animation: drift-near 15s ease-in-out infinite alternate; }
-}
-@keyframes drift-far { from { transform: translate3d(-3px, 2px, 0); } to { transform: translate3d(3px, -2px, 0); } }
-@keyframes drift-near { from { transform: translate3d(4px, -3px, 0) scale(1.7); } to { transform: translate3d(-4px, 3px, 0) scale(1.7); } }
-
-/* Phones: fainter, pieces at the top and bottom edges only, no near layer. */
 @media (max-width: 639px) {
-  .depth-far { display: none; }
-  .depth-far-phone {
-    display: block;
-    position: absolute;
-    inset: 0;
-    opacity: 0.6;
-    background-repeat: no-repeat;
-    background-size: 250% auto, 250% auto;
-    background-position: left top, right bottom;
-    will-change: transform;
-    animation: drift-far 12s ease-in-out infinite alternate;
-  }
-  .depth-far-wrap {
-    -webkit-mask-image: linear-gradient(to bottom, #000 0%, transparent 24%, transparent 74%, #000 100%);
-    mask-image: linear-gradient(to bottom, #000 0%, transparent 24%, transparent 74%, #000 100%);
-  }
   .depth-front { display: none; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .depth-far, .depth-near, .depth-far-phone { animation: none !important; transition: none !important; }
-  .depth-far { transform: none; }
-  .depth-near { transform: scale(1.7); }
-}
+/* The hero video on its own GPU layer, with no effects; only opacity changes above it. */
+.hero-video, .hero-video-hold { transform: translateZ(0); will-change: transform; }
 
 /* ---------- Baker on the history timeline (src/components/ChefWalk.tsx) ---------- */
 .chef-mover { will-change: transform; }
@@ -526,13 +543,16 @@
    shop switch row reach 72px + the top safe area (min 12px) into it, so the content
    starts below that and is centred in the space left; 52px at the bottom for the cue. */
 @media (max-width: 767px) {
+  /* The hero also reaches up behind the 56px spacer above it (layout.tsx), so on phones
+     it is the only background from the top of the screen, with no seam under the header. */
   .hero-screen {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: calc(100vh - 56px);
-    min-height: calc(100svh - 56px);
-    padding-top: calc(72px + max(12px, env(safe-area-inset-top)));
+    margin-top: -56px;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding-top: calc(56px + 72px + max(12px, env(safe-area-inset-top)));
     padding-bottom: 52px;
   }
   /* Short phones: the video gets whatever height is left after the logo, line and button
@@ -551,6 +571,7 @@
 
 /* Frosted glass only in the header; everywhere else .glass is a plain tint (no backdrop-filter). */
 header .glass {
+  background: rgba(251, 245, 234, 0.8);
   -webkit-backdrop-filter: blur(18px) saturate(150%);
   backdrop-filter: blur(18px) saturate(150%);
 }
@@ -565,4 +586,27 @@ video.chef-video::-webkit-media-controls-start-playback-button,
 video.chef-video::-webkit-media-controls-overlay-play-button {
   display: none !important;
   -webkit-appearance: none;
+}
+
+/* ---------- Chef sprites (touch devices; src/components/ChefWalk.tsx) ---------- */
+/* 24 frames side by side; --fw is one frame's width. The walk steps at 24fps, the wave at 12fps. */
+.chef-sprite {
+  background-repeat: no-repeat;
+  background-size: calc(var(--fw) * 24) 100%;
+  background-position: 0 0;
+}
+.chef-sprite-walk {
+  background-image: url("/chef/walk-sprite.webp");
+  /* 24 frames at 24fps (keep in step with SPRITE_WALK_FPS in ChefWalk.tsx). */
+  animation: chef-walk-cycle calc(24s / 24) steps(24) infinite;
+}
+.chef-sprite-wave {
+  background-image: url("/chef/wave-sprite.webp");
+  /* Plays once and holds the last frame. */
+  animation: chef-wave-once calc(23s / 12) steps(23) forwards;
+}
+@keyframes chef-walk-cycle { from { background-position: 0 0; } to { background-position: calc(var(--fw) * -24) 0; } }
+@keyframes chef-wave-once { from { background-position: 0 0; } to { background-position: calc(var(--fw) * -23) 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .chef-sprite-walk, .chef-sprite-wave { animation: none; }
 }

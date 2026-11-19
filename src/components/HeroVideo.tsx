@@ -1,116 +1,234 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
-import { STORE_IDS, STORES, type StoreId } from "@/lib/site";
+import { DEFAULT_STORE, STORE_IDS, STORES, heroVideoFiles, type StoreId } from "@/lib/site";
 import { useStore } from "./providers";
-import { isWebKit, prepareInlineVideo } from "@/lib/media-support";
+import { prepareInlineVideo } from "@/lib/media-support";
 
 /** Soft radial feather so the clip's rectangle edge never shows. */
-// Radii of 50% put full transparency exactly at the box edges, so no side or corner can show.
 const FEATHER = "radial-gradient(ellipse 50% 50% at 50% 50%, #000 62%, transparent 100%)";
+const feather = { WebkitMaskImage: FEATHER, maskImage: FEATHER } as const;
+/** 480p on phones and portrait tablets, 720p otherwise (also used as <source media> before any script runs). */
+const SMALL = "(max-width: 1023px), (orientation: portrait)";
 
 /**
- * The selected shop's looping clip (Amstel: espresso, Elkton: croissant; see
- * `video` in src/lib/site.ts). The poster shows at once; the video fades in over
- * it once it plays. Switching shop crossfades the two layers over 0.6s.
+ * The <video> tag is written as raw HTML so the server-rendered page carries real
+ * `autoplay muted playsinline loop preload poster` attributes: iOS decides on autoplay
+ * from those attributes, and React does not reliably render `muted`. It starts on the
+ * default shop's clip; the client switches it if another shop is selected.
+ */
+function videoHtml() {
+  const s = heroVideoFiles(STORES[DEFAULT_STORE].video, "480");
+  const l = heroVideoFiles(STORES[DEFAULT_STORE].video, "720");
+  const style = `opacity:0;-webkit-mask-image:${FEATHER};mask-image:${FEATHER}`;
+  return (
+    `<video class="hero-video absolute inset-0 h-full w-full object-cover transition-opacity duration-500" ` +
+    `autoplay muted playsinline webkit-playsinline loop preload="auto" poster="${l.poster}" ` +
+    `disablepictureinpicture disableremoteplayback tabindex="-1" aria-hidden="true" style="${style}">` +
+    `<source src="${s.h264}" type="video/mp4" media="${SMALL}">` +
+    `<source src="${l.h264}" type="video/mp4">` +
+    `</video>`
+  );
+}
+
+/**
+ * One constant object: React 19 rewrites dangerouslySetInnerHTML whenever the object
+ * changes identity (even with the same HTML), which would swap in a new <video> on every
+ * render. Created once, it is written once.
+ */
+const VIDEO_HTML = { __html: videoHtml() };
+
+/**
+ * The selected shop's looping clip (Amstel: espresso, Elkton: croissant).
  *
- * Only the selected shop's video is downloaded; the other loads the first time
- * the visitor switches to it. Playback pauses while the hero is off screen.
- * The loop is seamless because the files themselves crossfade their end into
- * their start (scripts/build-hero-videos.sh). With reduced motion: poster only.
+ * - One <video> element (H.264 only), present in the server HTML with autoplay,
+ *   muted, playsinline, loop, preload and poster attributes.
+ * - On mount it calls play(). If the browser refuses (NotAllowedError, e.g. iOS Low
+ *   Power Mode, which blocks every video autoplay), it switches at once to an animated
+ *   WebP of the same loop. Animated images always play, so the hero is never still and
+ *   never shows a play icon.
+ * - iPhone and iPad: native `loop`. Desktop: at the end the last frame is held on a
+ *   canvas, the clip restarts, and the canvas fades out over 0.5s (unchanged).
+ * - Switching shop holds the current frame on the canvas, loads the other clip, and
+ *   fades over 0.6s. Pauses off screen and in hidden tabs. Reduced motion: poster only.
  */
 export default function HeroVideo({ className = "" }: { className?: string }) {
   const { id, ready } = useStore();
   const reduce = useReducedMotion();
   const wrap = useRef<HTMLDivElement>(null);
-  const videos = useRef<Partial<Record<StoreId, HTMLVideoElement | null>>>({});
-  const [wanted, setWanted] = useState<StoreId[]>([]);
-  const [playing, setPlaying] = useState<Partial<Record<StoreId, boolean>>>({});
-  const [onScreen, setOnScreen] = useState(true);
-  // Shops whose autoplay the browser refused (e.g. iOS Low Power Mode): poster only, never a play button.
-  const [blocked, setBlocked] = useState<StoreId[]>([]);
-  const [webkit, setWebkit] = useState(false);
-  useEffect(() => setWebkit(isWebKit()), []);
+  const holder = useRef<HTMLDivElement>(null);
+  const shot = useRef<HTMLCanvasElement>(null);
+  const video = useRef<HTMLVideoElement | null>(null);
+  const loadedStore = useRef<StoreId>(DEFAULT_STORE);
+  const onScreen = useRef(true);
+  const fadeMs = useRef(500);
+  const showing = useRef(false);
+  // Video autoplay refused: show the animated WebP of the clip instead (it always plays).
+  const [blocked, setBlocked] = useState(false);
 
-  // Load a shop's video only once it has been selected (after the remembered shop is known).
+  /** Play, treating only a real refusal as blocked; a load interrupting play() (AbortError) is fine. */
+  const play = useCallback(() => {
+    const v = video.current;
+    if (!v || !onScreen.current || document.hidden || blocked) return;
+    prepareInlineVideo(v);
+    v.play().catch((err: DOMException) => {
+      // A load interrupting play() (AbortError) is harmless; only a refusal switches to the animation.
+      if (err?.name === "NotAllowedError") setBlocked(true);
+    });
+  }, [blocked]);
+
+  /** Freeze the current frame on the canvas above the video (opacity 1, no transition). */
+  const hold = useCallback(() => {
+    const v = video.current;
+    const c = shot.current;
+    if (!v || !c || !v.videoWidth) return;
+    c.width = v.videoWidth;
+    c.height = v.videoHeight;
+    c.getContext("2d")?.drawImage(v, 0, 0, c.width, c.height);
+    c.style.transition = "none";
+    c.style.opacity = "1";
+  }, []);
+
+  /** Fade the held frame out once the video is showing again. */
+  const release = useCallback(() => {
+    const c = shot.current;
+    if (!c || c.style.opacity !== "1") return;
+    requestAnimationFrame(() => {
+      c.style.transition = `opacity ${fadeMs.current}ms ease-out`;
+      c.style.opacity = "0";
+    });
+  }, []);
+
+  // Wire up the server-rendered <video>: events and loop mode.
   useEffect(() => {
-    if (ready && !reduce) setWanted((w) => (w.includes(id) ? w : [...w, id]));
-  }, [id, ready, reduce]);
+    const v = holder.current?.querySelector("video") ?? null;
+    video.current = v;
+    if (!v) return;
+    prepareInlineVideo(v);
+    const touch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+    // iPhone/iPad: native loop. Desktop: the held-frame hand-over at the end (as before).
+    v.loop = touch;
+    const onPlaying = () => {
+      showing.current = true;
+      v.style.opacity = "1";
+      release();
+    };
+    // Autoplay can start from the server HTML before this runs, so also reveal on the first frame update.
+    const onTime = () => {
+      if (v.currentTime > 0 && v.style.opacity !== "1") onPlaying();
+    };
+    const onEnded = () => {
+      if (v.loop) return;
+      fadeMs.current = 500;
+      hold();
+      v.currentTime = 0;
+      play();
+    };
+    v.addEventListener("playing", onPlaying);
+    v.addEventListener("timeupdate", onTime);
+    v.addEventListener("ended", onEnded);
+    if (!v.paused && v.currentTime > 0) onPlaying(); // autoplay already running
+    return () => {
+      v.removeEventListener("playing", onPlaying);
+      v.removeEventListener("timeupdate", onTime);
+      v.removeEventListener("ended", onEnded);
+    };
+  }, [hold, release, play]);
 
+  // Reduced motion: never play; the poster stays.
+  useEffect(() => {
+    if (reduce) video.current?.pause();
+  }, [reduce]);
+
+  // Play the selected shop's clip (switching the source if another shop is chosen).
+  useEffect(() => {
+    const v = video.current;
+    if (!v || !ready || reduce || blocked) return;
+    if (loadedStore.current !== id) {
+      if (showing.current) {
+        fadeMs.current = 600;
+        hold();
+      }
+      const size = window.matchMedia(SMALL).matches ? "480" : "720";
+      const f = heroVideoFiles(STORES[id].video, size);
+      v.poster = f.poster;
+      v.src = f.h264; // an explicit src overrides the server-rendered <source> list
+      loadedStore.current = id;
+      v.load();
+    }
+    play();
+  }, [id, ready, reduce, blocked, hold, play]);
+
+  // Pause off screen and when the tab is hidden; resume when back.
   useEffect(() => {
     const el = wrap.current;
     if (!el) return;
-    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting), { threshold: 0.05 });
+    const sync = () => {
+      const v = video.current;
+      if (!v) return;
+      if (onScreen.current && !document.hidden) play();
+      else v.pause();
+    };
+    const io = new IntersectionObserver(([e]) => {
+      onScreen.current = e.isIntersecting;
+      sync();
+    }, { threshold: 0.05 });
     io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  // Play the selected shop's clip while the hero is visible; pause everything else.
-  useEffect(() => {
-    for (const sid of STORE_IDS) {
-      const v = videos.current[sid];
-      if (!v) continue;
-      if (sid === id && onScreen) {
-        prepareInlineVideo(v);
-        v.play().catch(() => setBlocked((b) => (b.includes(sid) ? b : [...b, sid])));
-      } else v.pause();
-    }
-  }, [id, onScreen, wanted]);
+    document.addEventListener("visibilitychange", sync);
+    return () => {
+      io.disconnect();
+      document.removeEventListener("visibilitychange", sync);
+    };
+  }, [play]);
 
   return (
     <div ref={wrap} className={`relative ${className}`}>
+      {/* The clip's own corner colour glowing softly behind it. */}
+      {STORE_IDS.map((sid) => (
+        <div
+          key={`bg-${sid}`}
+          aria-hidden
+          className="absolute inset-[-8%] transition-opacity duration-[600ms] ease-out"
+          style={{ opacity: sid === id ? 1 : 0, background: `radial-gradient(ellipse 55% 55% at 50% 50%, ${STORES[sid].video.bg} 40%, transparent 100%)` }}
+        />
+      ))}
+      {/* Posters: the first frame of each shop's clip, crossfading with the shop. */}
       {STORE_IDS.map((sid) => {
-        const clip = STORES[sid].video;
         const on = sid === id;
         return (
-          <div
-            key={sid}
-            aria-hidden={!on}
-            className="absolute inset-0 transition-opacity duration-[600ms] ease-out"
-            style={{ opacity: on ? 1 : 0 }}
-          >
-            {/* The clip's own corner colour behind it, fading out into the page cream. */}
-            <div className="absolute inset-[-8%]" style={{ background: `radial-gradient(ellipse 55% 55% at 50% 50%, ${clip.bg} 40%, transparent 100%)` }} />
+          <picture key={sid}>
+            <source media={SMALL} srcSet={heroVideoFiles(STORES[sid].video, "480").poster} />
             {/* eslint-disable-next-line @next/next/no-img-element -- a poster that must paint before any script runs */}
             <img
-              src={clip.poster}
-              alt={on ? clip.label : ""}
+              src={heroVideoFiles(STORES[sid].video, "720").poster}
+              alt={on ? STORES[sid].video.label : ""}
+              aria-hidden={!on}
               fetchPriority={on ? "high" : "low"}
               decoding="async"
-              className="absolute inset-0 h-full w-full object-cover"
-              style={{ WebkitMaskImage: FEATHER, maskImage: FEATHER }}
+              className="absolute inset-0 h-full w-full object-cover transition-opacity duration-[600ms] ease-out"
+              style={{ ...feather, opacity: on ? 1 : 0 }}
             />
-            {wanted.includes(sid) && !blocked.includes(sid) && (
-              <video
-                ref={(el) => {
-                  videos.current[sid] = el;
-                  // Muted + inline set on the element itself: React doesn't reliably render `muted`, and iOS decides on it.
-                  if (el) prepareInlineVideo(el);
-                }}
-                autoPlay={on}
-                muted
-                loop
-                playsInline
-                preload="auto"
-                disablePictureInPicture
-                disableRemotePlayback
-                tabIndex={-1}
-                aria-hidden
-                poster={clip.poster}
-                onPlaying={() => setPlaying((p) => ({ ...p, [sid]: true }))}
-                className="hero-video absolute inset-0 h-full w-full object-cover transition-opacity duration-500"
-                style={{ WebkitMaskImage: FEATHER, maskImage: FEATHER, opacity: playing[sid] ? 1 : 0 }}
-              >
-                {/* WebKit (Safari, every iOS browser): H.264 only, hardware-decoded and allowed to autoplay.
-                    Others: the smaller VP9 WebM first. */}
-                {!webkit && <source src={clip.webm} type='video/webm; codecs="vp9"' />}
-                <source src={clip.mp4} type="video/mp4" />
-              </video>
-            )}
-          </div>
+          </picture>
         );
       })}
+      {/* The single video, server-rendered with real attributes. */}
+      {!blocked && <div ref={holder} className="absolute inset-0" suppressHydrationWarning dangerouslySetInnerHTML={VIDEO_HTML} />}
+      {/* Video refused (Low Power Mode): the same loop as an animated image, which always plays. */}
+      {blocked && !reduce && (
+        // eslint-disable-next-line @next/next/no-img-element -- animated fallback, plays without autoplay permission
+        <img
+          key={id}
+          src={heroVideoFiles(STORES[id].video, "480").anim}
+          alt=""
+          aria-hidden
+          decoding="async"
+          className="hero-video absolute inset-0 h-full w-full object-cover"
+          style={feather}
+        />
+      )}
+      {/* The held frame during a loop hand-over or a shop switch. Only its opacity changes. */}
+      <canvas ref={shot} aria-hidden className="hero-video-hold pointer-events-none absolute inset-0 h-full w-full" style={{ ...feather, opacity: 0 }} />
     </div>
   );
 }

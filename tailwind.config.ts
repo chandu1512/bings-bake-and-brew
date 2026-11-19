@@ -18,7 +18,8 @@ const config: Config = {
         leaf: "#1B7447",
       },
       fontFamily: {
-        display: ["'Playfair Display Variable'", "'Playfair Display'", "Georgia", "serif"],
+        display: ["var(--font-marcellus)", "Georgia", "serif"],
+        light: ["var(--font-open-sans)", "system-ui", "sans-serif"],
         sans: ["'Jost Variable'", "Jost", "system-ui", "sans-serif"],
         script: ["Yellowtail", "'Snell Roundhand'", "cursive"],
       },

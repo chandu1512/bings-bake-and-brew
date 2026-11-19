@@ -59,34 +59,41 @@ export type Store = {
 };
 
 /**
- * Hero depth image. `blend: "multiply"` drops the cream background (for dark
- * subjects like beans). `"match"` keeps normal blending and sets the hero
- * background to `bg`, the image's own backdrop (for white subjects like flour,
- * which multiply would erase).
+ * A hero clip, built by scripts/build-hero-videos.py from source-media/story.
+ * Files: <base>-720.mp4 / <base>-480.mp4 (H.264 Main, the only format: it autoplays
+ * everywhere, iOS included) and <base>-720-poster.webp / -480-poster.webp.
+ * The rectangle edge is hidden with a CSS radial mask (HeroVideo.tsx).
+ */
+export type HeroVideo = { base: string; label: string; /** The clip's own backdrop colour, glowed softly behind it. */ bg: string };
+
+export const HERO_VIDEOS = {
+  brew: { base: "/story/brew", label: "Espresso pouring into a white cup", bg: "#f0e6d2" },
+  bake: { base: "/story/bake", label: "A croissant splitting open, flakes flying", bg: "#f4f2e5" },
+} satisfies Record<string, HeroVideo>;
+
+/** URLs for a hero clip at a size ("720" desktop, "480" phones and tablets in portrait). */
+export const heroVideoFiles = (v: HeroVideo, size: "720" | "480") => ({
+  h264: `${v.base}-${size}.mp4`,
+  /** Animated WebP of the same loop (480p, 20fps), used when iOS refuses video autoplay, e.g. in Low Power Mode. */
+  anim: `${v.base}-anim.webp`,
+  poster: `${v.base}-${size}-poster.webp`,
+});
+
+/**
+ * Hero depth images. `bgWide` / `bgPhone` are the hero background with the far bean or
+ * flour layer already composited in (one static image each, no blend modes); `near` is
+ * the front layer, pre-blurred and transparent.
  */
 export type HeroLayers = {
-  src: string;
-  /** The near (front) layer: pre-blurred, and for "multiply" images already keyed to transparency, so the browser does no live blur or blending. */
+  bgWide: string;
+  bgPhone: string;
   near: string;
-  blend: "multiply" | "match";
-  bg: string;
 };
 
 export const HERO_LAYER_IMAGES = {
-  beans: { src: "/story/beans.webp", near: "/story/beans-near.webp", blend: "multiply", bg: "#f8efde" },
-  flour: { src: "/story/flour.webp", near: "/story/flour-near.webp", blend: "match", bg: "#f9eddd" },
+  beans: { bgWide: "/story/hero-bg-amstel-wide.webp", bgPhone: "/story/hero-bg-amstel-phone.webp", near: "/story/beans-near.webp" },
+  flour: { bgWide: "/story/hero-bg-elkton-wide.webp", bgPhone: "/story/hero-bg-elkton-phone.webp", near: "/story/flour-near.webp" },
 } satisfies Record<string, HeroLayers>;
-
-/**
- * A hero clip, built by scripts/build-hero-videos.sh from source-media/story.
- * `bg` is the clip's corner colour, used behind the video so it melts into the page.
- */
-export type HeroVideo = { mp4: string; webm: string; poster: string; bg: string; label: string };
-
-export const HERO_VIDEOS = {
-  brew: { mp4: "/story/brew.mp4", webm: "/story/brew.webm", poster: "/story/brew-poster.webp", bg: "#f0e6d2", label: "Espresso pouring into a white cup" },
-  bake: { mp4: "/story/bake.mp4", webm: "/story/bake.webm", poster: "/story/bake-poster.webp", bg: "#f4f2e5", label: "A croissant splitting open, flakes flying" },
-} satisfies Record<string, HeroVideo>;
 
 const h = (hh: number, mm = 0) => hh * 60 + mm;
 const monSat = (open: number, close: number): DayHours[] => [

@@ -5,25 +5,25 @@ import { STORE_IDS, STORES, type StoreId } from "@/lib/site";
 import { useStore } from "./providers";
 
 /**
- * Layered depth behind and in front of the hero video, from one still per shop
- * (`layers` in src/lib/site.ts). CSS transforms only.
+ * Layered depth around the hero video, from per-shop images (`layers` in src/lib/site.ts).
  *
- *   back:  the hero background colour plus the image at normal size (far layer)
- *   front: the same image at 1.7x, blurred, only at the far left and right edges
+ *   back:  one static WebP: the hero background with the far bean or flour layer
+ *          already composited in (no blend modes, no masks)
+ *   front: the near layer, pre-blurred and transparent, in two edge strips that
+ *          never overlap the video, so nothing moving ever sits on top of it
  *
- * Desktop: the pointer writes --hx/--hy on the hero inside requestAnimationFrame,
- * and CSS moves the layers (far up to 8px, near up to 24px the other way) with
- * a 0.4s ease. Touch: a slow CSS drift instead. Reduced motion: still.
- * Styles live in globals.css under "Hero depth".
+ * Desktop with a mouse: the pointer writes --hx/--hy on the hero inside
+ * requestAnimationFrame and CSS shifts the layers (far 8px, near 24px the other way).
+ * Touch devices: nothing moves. Styles: "Hero depth" in globals.css.
  */
 export default function HeroDepth({ layer }: { layer: "back" | "front" }) {
   const { id } = useStore();
   const root = useRef<HTMLDivElement>(null);
-  // Only download a shop's image once it has been selected.
+  // Only download a shop's images once it has been selected.
   const [seen, setSeen] = useState<StoreId[]>([id]);
   useEffect(() => setSeen((s) => (s.includes(id) ? s : [...s, id])), [id]);
 
-  // Pointer parallax, set up once by the back layer. No React state per frame.
+  // Pointer parallax, set up once by the back layer, mouse only. No React state per frame.
   useEffect(() => {
     if (layer !== "back") return;
     const hero = root.current?.closest<HTMLElement>("[data-hero]");
@@ -31,6 +31,7 @@ export default function HeroDepth({ layer }: { layer: "back" | "front" }) {
     const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
     const still = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!fine.matches || still.matches) return;
+    hero.dataset.parallax = "";
     let raf = 0;
     let x = 0;
     let y = 0;
@@ -56,6 +57,7 @@ export default function HeroDepth({ layer }: { layer: "back" | "front" }) {
       hero.removeEventListener("pointermove", move);
       hero.removeEventListener("pointerleave", leave);
       cancelAnimationFrame(raf);
+      delete hero.dataset.parallax;
     };
   }, [layer]);
 
@@ -65,24 +67,24 @@ export default function HeroDepth({ layer }: { layer: "back" | "front" }) {
         const L = STORES[sid].layers;
         const on = sid === id;
         return (
-          // Only the far layer blends (multiply); the near layer is a pre-keyed image with normal blending.
-          <div key={sid} className={`depth-set ${layer === "back" ? `depth-${L.blend}` : ""}`} style={{ opacity: on ? 1 : 0 }}>
+          <div key={sid} className="depth-set" style={{ opacity: on ? 1 : 0 }}>
             {layer === "back" ? (
+              <picture>
+                <source media="(max-width: 639px)" srcSet={L.bgPhone} />
+                {/* eslint-disable-next-line @next/next/no-img-element -- decorative static background */}
+                <img src={L.bgWide} alt="" decoding="async" fetchPriority={on ? "high" : "low"} className="depth-far" />
+              </picture>
+            ) : (
               <>
-                {/* "match" images: the hero takes the image's own backdrop colour. */}
-                {L.blend === "match" && <div className="absolute inset-0" style={{ background: L.bg }} />}
-                <div className="depth-far-wrap">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- decorative, CSS-transformed layer */}
-                  <img src={L.src} alt="" decoding="async" fetchPriority={on ? "high" : "low"} className="depth-far" />
-                  {/* Phones: the left cluster at the top, the right cluster at the bottom, nothing mid-screen. */}
-                  <div className="depth-far-phone" style={{ backgroundImage: `url(${L.src}), url(${L.src})` }} />
+                <div className="depth-near-strip depth-near-left">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- decorative, pre-blurred */}
+                  <img src={L.near} alt="" decoding="async" loading="lazy" className="depth-near" />
+                </div>
+                <div className="depth-near-strip depth-near-right">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- decorative, pre-blurred */}
+                  <img src={L.near} alt="" decoding="async" loading="lazy" className="depth-near" />
                 </div>
               </>
-            ) : (
-              <div className="depth-near-wrap">
-                {/* eslint-disable-next-line @next/next/no-img-element -- decorative, CSS-transformed layer */}
-                <img src={L.near} alt="" decoding="async" loading="lazy" className="depth-near" />
-              </div>
             )}
           </div>
         );

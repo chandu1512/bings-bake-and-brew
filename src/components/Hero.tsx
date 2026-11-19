@@ -13,7 +13,7 @@ import { ArrowRight } from "./icons";
 export default function Hero() {
   return (
     // isolate + a cream base so the beans layer's multiply blend only sees the hero.
-    <section data-hero className="hero-screen relative isolate overflow-hidden bg-porcelain pb-14 pt-[92px] md:pt-[108px]">
+    <section data-hero data-keep-type className="hero-screen relative isolate overflow-hidden bg-porcelain pb-14 pt-[92px] md:pt-[108px]">
       <HeroDepth layer="back" />
       <div className="shell flex flex-col items-center text-center">
         <h1 className="relative z-10 m-0">

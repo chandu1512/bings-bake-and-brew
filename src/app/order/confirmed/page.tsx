@@ -9,6 +9,7 @@ import { money } from "@/lib/menu";
 import type { PricedLine } from "@/lib/order-types";
 import { useBag } from "@/components/providers";
 import { Check } from "@/components/icons";
+import BeanDivider from "@/components/BeanDivider";
 
 type Result = {
   code: string;
@@ -68,6 +69,7 @@ function Confirmed() {
         <Check size={30} />
       </motion.div>
       <h1 className="display-md mt-5">{paid ? `Thanks, ${order.name.split(" ")[0]}!` : "Payment pending"}</h1>
+      <BeanDivider className="mt-4" />
       <p className="mt-2 text-ink-soft">
         {paid
           ? `Order ${order.code} is in. Pick it up at ${store.name}, ${store.street}, ${when}.`

@@ -29,7 +29,7 @@ export default async function StoreMenuPage({ params }: Params) {
   return (
     <div className="shell pb-24 pt-[120px] md:pt-[150px]">
       <MenuBoard mode="all" heading="h1" storeId={store} />
-      <p className="mt-14 max-w-[62ch] text-ink-soft">
+      <p className="subtitle mx-auto mt-14 max-w-[62ch] text-center">
         Drinks are priced at the smallest size; larger sizes and add-ons are priced when you choose them.
         &ldquo;Ask at counter&rdquo; means the price isn&rsquo;t posted yet. The bakery case changes with the day&rsquo;s bake.
       </p>

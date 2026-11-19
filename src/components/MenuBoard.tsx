@@ -11,6 +11,7 @@ import StoreToggle from "./StoreToggle";
 import OpenBadge from "./OpenBadge";
 import { Stepper } from "./BagDrawer";
 import { Plus } from "./icons";
+import BeanDivider from "./BeanDivider";
 
 const EASE = [0.23, 1, 0.32, 1] as const;
 
@@ -142,8 +143,8 @@ export default function MenuBoard({
 
   return (
     <div>
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-        <div>
+      <div className="section-head !mb-10">
+        <div className="flex flex-col items-center gap-5 md:gap-6">
           <H className="display-lg">
             The{" "}
             <span className="relative inline-block">
@@ -162,11 +163,12 @@ export default function MenuBoard({
             </span>{" "}
             menu
           </H>
-          <p className="lede mt-4">
+          <BeanDivider />
+          <p className="lede">
             Choose your size, milk and flavor, pay right here, and pick it up.
           </p>
         </div>
-        <div className="flex flex-col gap-3 lg:items-end">
+        <div className="flex w-full flex-col items-center gap-3">
           <StoreToggle id={`board-${mode}`} className="w-full sm:w-[400px]" />
           <OpenBadge store={store} className="text-[0.95rem]" />
         </div>
@@ -174,7 +176,7 @@ export default function MenuBoard({
 
       {mode === "tabs" ? (
         <>
-          <div className="-mx-5 mt-8 overflow-x-auto px-5 [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden">
+          <div className="-mx-5 mt-8 overflow-x-auto px-5 [scrollbar-width:none] md:mx-0 md:px-0 md:text-center [&::-webkit-scrollbar]:hidden">
             <div role="tablist" aria-label="Menu sections" className="inline-flex gap-1 rounded-full bg-ink/[0.06] p-1">
               {cats.map((c) => {
                 const on = c.id === cat.id;
@@ -211,7 +213,7 @@ export default function MenuBoard({
               exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.14 } }}
               className="mt-6"
             >
-              <p className="mb-5 text-ink-soft">{cat.blurb}</p>
+              <p className="subtitle mb-6 text-center">{cat.blurb}</p>
               <Grid items={cat.items} />
             </motion.div>
           </AnimatePresence>
@@ -220,7 +222,7 @@ export default function MenuBoard({
         <>
           <nav
             aria-label="Menu sections"
-            className="sticky top-[76px] z-30 -mx-5 mt-8 overflow-x-auto px-5 py-2 [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden"
+            className="sticky top-[76px] z-30 -mx-5 mt-8 overflow-x-auto px-5 py-2 [scrollbar-width:none] md:mx-0 md:px-0 md:text-center [&::-webkit-scrollbar]:hidden"
           >
             <div className="glass inline-flex gap-1 rounded-full p-1">
               {cats.map((c) => (
@@ -236,11 +238,18 @@ export default function MenuBoard({
           </nav>
           <AnimatePresence mode="wait" initial={false}>
             <motion.div key={id} exit={{ opacity: 0, filter: "blur(4px)", transition: { duration: 0.14 } }}>
-              {cats.map((c) => (
-                <section key={c.id} id={c.id} aria-labelledby={`${c.id}-h`} className="pt-12 md:pt-16">
-                  <div className="mb-6 flex flex-col gap-1 md:flex-row md:items-baseline md:justify-between md:gap-8">
+              {cats.map((c, i) => (
+                // Categories alternate white and paper down the page.
+                <section
+                  key={c.id}
+                  id={c.id}
+                  aria-labelledby={`${c.id}-h`}
+                  className={`scroll-mt-28 py-12 md:py-16 ${i % 2 === 0 ? "band-white" : ""}`}
+                >
+                  <div className="section-head !mb-8 !gap-4">
                     <h2 id={`${c.id}-h`} className="display-md">{c.name}</h2>
-                    <p className="text-ink-soft">{c.blurb}</p>
+                    <BeanDivider />
+                    <p className="subtitle max-w-[52ch]">{c.blurb}</p>
                   </div>
                   <Grid items={c.items} />
                 </section>

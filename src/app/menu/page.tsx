@@ -6,6 +6,7 @@ import { STORE_IDS, STORES, addressLines } from "@/lib/site";
 import { hoursSummary } from "@/lib/hours";
 import { ArrowRight } from "@/components/icons";
 import MenuChooserRedirect from "@/components/MenuChooserRedirect";
+import BeanDivider from "@/components/BeanDivider";
 
 const title = `Menu | ${TOWNS}`;
 const description = `Pick your shop to see its menu and prices: Bing's Bake & Brew in ${TOWNS}.`;
@@ -17,9 +18,12 @@ export default function MenuChooserPage() {
   return (
     <div className="shell pb-24 pt-[120px] md:pt-[150px]">
       <MenuChooserRedirect />
-      <h1 className="display-xl max-w-[14ch]">Which shop&rsquo;s menu?</h1>
-      <p className="lede mt-5">Each shop has its own menu and prices.</p>
-      <ul className="mt-12 grid gap-6 lg:grid-cols-2">
+      <div className="section-head">
+        <h1 className="display-xl max-w-[18ch]">Which shop&rsquo;s menu?</h1>
+        <BeanDivider />
+        <p className="lede">Each shop has its own menu and prices.</p>
+      </div>
+      <ul className="grid gap-6 lg:grid-cols-2">
         {STORE_IDS.map((id) => {
           const s = STORES[id];
           const [l1, l2] = addressLines(s);

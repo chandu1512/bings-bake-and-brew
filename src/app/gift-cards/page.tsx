@@ -4,6 +4,7 @@ import { pageMeta } from "@/lib/seo";
 import GiftCard from "@/components/GiftCard";
 import { ArrowUpRight, Lock } from "@/components/icons";
 import { GIFT_CARD_URL, STORES } from "@/lib/site";
+import BeanDivider from "@/components/BeanDivider";
 
 export const metadata: Metadata = pageMeta({
   title: "Gift Cards",
@@ -15,9 +16,10 @@ export default function GiftCardsPage() {
   return (
     <>
       <section className="shell grid items-center gap-12 pb-20 pt-[120px] md:pt-[150px] lg:grid-cols-2 lg:gap-16 lg:pb-28">
-        <div>
-          <h1 className="display-xl max-w-[11ch]">A gift card for the coffee run.</h1>
-          <p className="lede mt-6">
+        <div className="flex flex-col items-center text-center">
+          <h1 className="display-xl max-w-[16ch]">A gift card for the coffee run.</h1>
+          <BeanDivider className="mt-5" />
+          <p className="lede mt-5">
             Good for a round of lattes, a box from the bakery case, or a regular who never says no to crumb cake.
           </p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -25,7 +27,7 @@ export default function GiftCardsPage() {
               Buy a gift card <ArrowUpRight className="nudge" />
             </a>
           </div>
-          <p className="mt-4 flex max-w-[46ch] gap-2 text-[0.95rem] text-ink-soft">
+          <p className="subtitle mt-4 flex max-w-[46ch] gap-2 text-left text-[0.95rem]">
             <Lock className="mt-0.5 shrink-0" />
             <span>Gift cards are sold and paid for on Toast. You choose the amount there.</span>
           </p>
@@ -33,7 +35,7 @@ export default function GiftCardsPage() {
         <GiftCard className="mx-auto w-full max-w-[560px]" />
       </section>
 
-      <section aria-labelledby="how-h" className="bg-porcelain-deep">
+      <section aria-labelledby="how-h" className="bg-white">
         <div className="shell grid gap-12 py-20 lg:grid-cols-2 lg:items-center lg:py-28">
           <div className="zoom-frame gloss relative aspect-[4/3] overflow-hidden rounded-[28px]">
             <Image
@@ -45,8 +47,11 @@ export default function GiftCardsPage() {
             />
           </div>
           <div>
-            <h2 id="how-h" className="display-lg">How it works</h2>
-            <ol className="mt-8">
+            <div className="section-head !mb-8">
+              <h2 id="how-h" className="display-lg">How it works</h2>
+              <BeanDivider />
+            </div>
+            <ol>
               {[
                 ["Open the Toast gift card page", "The button above takes you there."],
                 ["Choose an amount and who it’s for", "Toast walks you through it."],

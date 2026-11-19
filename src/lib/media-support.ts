@@ -19,9 +19,12 @@ export function isWebKit() {
  *   webm  VP9 with alpha (Chrome, Firefox, Edge on desktop and Android)
  *   hevc  HEVC with alpha in .mov (Safari / WebKit that can decode it)
  *   webp  animated WebP with alpha (WebKit that can't, e.g. older iPads)
+ *   sprite  CSS sprite sheets (every touch device: iPhone, iPad, Android). Transparent
+ *           video is unreliable on iOS, so touch devices never get video for the chef.
  */
-export type ChefFormat = "webm" | "hevc" | "webp";
+export type ChefFormat = "webm" | "hevc" | "webp" | "sprite";
 export function chefFormat(): ChefFormat {
+  if (window.matchMedia("(hover: none), (pointer: coarse)").matches) return "sprite";
   if (!isWebKit()) return "webm";
   const probe = document.createElement("video");
   return probe.canPlayType('video/mp4; codecs="hvc1"') || probe.canPlayType('video/quicktime; codecs="hvc1"') ? "hevc" : "webp";

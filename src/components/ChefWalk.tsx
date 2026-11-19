@@ -30,6 +30,23 @@ const MAX_RATE = 1.8;
 /** The animated WebP fallback (scripts: see public/chef) runs every walk frame at 20ms, i.e. 1.67x, and the wave in real time. */
 const WEBP_WALK_RATE = 1000 / 30 / 20;
 const WAVE_MS = (156 / 30) * 1000;
+/**
+ * Touch devices: CSS sprite sheets (public/chef/walk-sprite.webp, wave-sprite.webp, made by
+ * scripts/build-chef-sprites.py), 24 frames each. The walk steps at 24fps, so one full stride
+ * (two steps, 2 x 93 clip px) takes 1s and he travels at 186 clip px/s, matched to his feet.
+ * The wave steps at 12fps. Keep SPRITE_WALK_FPS in step with `.chef-sprite-walk` in globals.css.
+ */
+const SPRITE_FRAMES = 24;
+const SPRITE_WALK_FPS = 24;
+const SPRITE_WAVE_FPS = 12;
+const SPRITE_WALK_RATE = (2 * 93) / (SPRITE_FRAMES / SPRITE_WALK_FPS) / FOOT_SPEED;
+const SPRITE_WAVE_MS = ((SPRITE_FRAMES - 1) / SPRITE_WAVE_FPS) * 1000;
+
+/** One frame of a sprite sheet, stepped by CSS (see "Chef sprites" in globals.css). */
+function Sprite({ kind, height }: { kind: "walk" | "wave"; height: number }) {
+  const fw = (height * CLIP_W) / CLIP_H;
+  return <div className={`chef-sprite chef-sprite-${kind} absolute inset-0`} style={{ ["--fw" as string]: `${fw}px` }} />;
+}
 
 type Phase = "idle" | "walking" | "waving" | "done";
 
@@ -93,6 +110,8 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
   const [phase, setPhase] = useState<Phase>("idle");
   const [waveLoaded, setWaveLoaded] = useState(false);
   const [trip, setTrip] = useState(0);
+  // Bubble on his left when the Today dot is too close to the right edge (e.g. iPad landscape).
+  const [bubbleLeft, setBubbleLeft] = useState(false);
 
   const clear = () => {
     timers.current.forEach(clearTimeout);
@@ -144,7 +163,8 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
     const box = root.current;
     const m = mover.current;
     const v = walk.current;
-    if (!box || !m || !m.offsetHeight || (fmt !== "webp" && !v)) return;
+    const imageMode = fmt === "webp" || fmt === "sprite";
+    if (!box || !m || !m.offsetHeight || (!imageMode && !v)) return;
     const dots = [...box.parentElement!.querySelectorAll<HTMLElement>("[data-dot]")];
     const stops = [...box.parentElement!.querySelectorAll<HTMLElement>("[data-stop]")];
     if (dots.length < 2) return;
@@ -158,8 +178,11 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
     const from = xs[0] - feet;
     const to = xs[xs.length - 1] - feet;
     const distance = to - from;
+    // Flip only if a right-hand bubble would run off the screen (it may extend past the timeline itself).
+    setBubbleLeft(base + to + m.offsetWidth * 0.85 + 280 > document.documentElement.clientWidth - 12);
     // Travel exactly as fast as the planted foot moves back, so it never slides.
-    const rate = fmt === "webp" ? WEBP_WALK_RATE : Math.min(MAX_RATE, Math.max(1, distance / TARGET_SECONDS / (FOOT_SPEED * scale)));
+    const rate =
+      fmt === "sprite" ? SPRITE_WALK_RATE : fmt === "webp" ? WEBP_WALK_RATE : Math.min(MAX_RATE, Math.max(1, distance / TARGET_SECONDS / (FOOT_SPEED * scale)));
     const seconds = distance / (FOOT_SPEED * scale * rate);
 
     clear();
@@ -188,6 +211,7 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
       window.setTimeout(() => {
         setWaveLoaded(true);
         if (fmt === "webp") new Image().src = waveWebp(trip);
+        if (fmt === "sprite") new Image().src = "/chef/wave-sprite.webp";
       }, (seconds * 1000) / 2),
     );
     // Arrived: crossfade into the wave.
@@ -196,8 +220,8 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
         setPhase("waving");
         phaseRef.current = "waving";
         const w = wave.current;
-        if (fmt === "webp") {
-          timers.current.push(window.setTimeout(() => setPhase("done"), WAVE_MS));
+        if (imageMode) {
+          timers.current.push(window.setTimeout(() => setPhase("done"), fmt === "sprite" ? SPRITE_WAVE_MS : WAVE_MS));
         } else if (w) {
           prepareInlineVideo(w);
           w.currentTime = 0;
@@ -226,11 +250,13 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
     <div ref={root} className="pointer-events-none absolute inset-x-0 hidden lg:block" style={{ height: 140, bottom: "calc(100% - 4px)" }}>
       <div ref={mover} className="chef-mover absolute bottom-0 left-0" style={{ height: 140, width: (140 * CLIP_W) / CLIP_H }}>
         <div aria-hidden className="relative h-full w-full">
+          {near && fmt === "sprite" && phase === "walking" && <Sprite kind="walk" height={140} />}
+          {near && fmt === "sprite" && phase === "waving" && <Sprite key={`wave-${trip}`} kind="wave" height={140} />}
           {near && fmt === "webp" && phase === "walking" && (
             // eslint-disable-next-line @next/next/no-img-element -- transparent animated fallback for WebKit without HEVC alpha
             <img src="/chef/walk.webp" alt="" className="absolute inset-0 h-full w-full" />
           )}
-          {near && fmt && fmt !== "webp" && (
+          {near && fmt && fmt !== "webp" && fmt !== "sprite" && (
             <video
               ref={walk}
               muted
@@ -248,7 +274,7 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
             // eslint-disable-next-line @next/next/no-img-element -- transparent animated fallback, plays once
             <img src={waveWebp(trip)} alt="" className="absolute inset-0 h-full w-full" />
           )}
-          {near && waveLoaded && fmt && fmt !== "webp" && (
+          {near && waveLoaded && fmt && fmt !== "webp" && fmt !== "sprite" && (
             <video
               ref={wave}
               muted
@@ -266,7 +292,7 @@ function DesktopWalk({ reduce, wide }: { reduce: boolean; wide: boolean }) {
           {waveLoaded && <img src="/chef/wave-end.png" alt="" className="chef-breathe absolute inset-0 h-full w-full" style={{ opacity: done ? 1 : 0 }} />}
         </div>
         {done && (
-          <div className="pointer-events-auto absolute bottom-[55%] left-[85%] w-max">
+          <div className={`pointer-events-auto absolute bottom-[55%] w-max ${bubbleLeft ? "right-[85%]" : "left-[85%]"}`}>
             <Bubble onReplay={replay} showReplay />
           </div>
         )}
@@ -324,8 +350,8 @@ function MobileWave({ reduce }: { reduce: boolean }) {
   // Video: prepare it for inline muted playback, then play. WebP: it plays once by itself.
   useEffect(() => {
     if (state !== "play" || !fmt) return;
-    if (fmt === "webp") {
-      const t = window.setTimeout(() => setState("done"), WAVE_MS);
+    if (fmt === "webp" || fmt === "sprite") {
+      const t = window.setTimeout(() => setState("done"), fmt === "sprite" ? SPRITE_WAVE_MS : WAVE_MS);
       return () => window.clearTimeout(t);
     }
     const v = video.current;
@@ -341,7 +367,8 @@ function MobileWave({ reduce }: { reduce: boolean }) {
           // eslint-disable-next-line @next/next/no-img-element -- transparent animated fallback, plays once
           <img src={waveWebp(0)} alt="" className="absolute inset-0 h-full w-full" />
         )}
-        {state === "play" && fmt && fmt !== "webp" && (
+        {state === "play" && fmt === "sprite" && <Sprite kind="wave" height={120} />}
+        {state === "play" && fmt && fmt !== "webp" && fmt !== "sprite" && (
           <video ref={video} muted playsInline autoPlay preload="auto" disablePictureInPicture onEnded={() => setState("done")} className="chef-video absolute inset-0 h-full w-full">
             <Sources name="wave" fmt={fmt} />
           </video>

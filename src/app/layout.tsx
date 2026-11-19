@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Marcellus, Open_Sans } from "next/font/google";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
@@ -9,6 +10,11 @@ import { Providers } from "@/components/providers";
 import { SHOP_NAME, SITE_URL } from "@/lib/site";
 import { OG_IMAGE, TOWNS, localBusinessJsonLd } from "@/lib/seo";
 import { realMenuPhotos } from "@/lib/photos";
+
+// Classic Bing's type: Marcellus for headings, light Open Sans for subtitles. next/font
+// self-hosts them and sizes the fallback to match, so there is no layout shift.
+const marcellus = Marcellus({ subsets: ["latin"], weight: "400", variable: "--font-marcellus", display: "swap" });
+const openSans = Open_Sans({ subsets: ["latin"], weight: ["300", "400"], variable: "--font-open-sans", display: "swap" });
 
 const description = `Coffee, espresso and Bing's Bakery pastries, baked since 1871, at two shops in ${TOWNS}. See each shop's menu, prices and hours, and order pickup online.`;
 
@@ -50,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   // suppressHydrationWarning on <html> only: Chrome on iOS adds a __gcrremoteframetoken
   // attribute to it before React loads. It is harmless and applies to this one element, not its children.
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${marcellus.variable} ${openSans.variable}`}>
       <body className="relative min-h-screen antialiased">
         <script
           type="application/ld+json"
